@@ -1,13 +1,13 @@
 <html>
   <head>
     <script src="https://d3js.org/d3.v6.min.js"></script>
+    <!-- <script src='./' -->
   </head>
   <body>
     <p>hello world</p>
     <script>
       async function main() {
         const data = await d3.csv('/data/states_all_extended.csv');
-        const data2 = await d3.csv('/data/states_all.csv');
 
         console.log(data[0]);
         console.log(data2[0]);

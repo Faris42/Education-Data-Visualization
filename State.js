@@ -1,11 +1,15 @@
 /**
  * Represents a state and contains a nested data structure of the time series
- * of Records.
+ * of Records. Should be nested inside a TopoJson feature.properties.value.
  */
-class State {
-  constructor(key, name) {
-    this.key = key;
+export default class State {
+  constructor(topoJsonKey, name) {
+    this.topoJsonKey = topoJsonKey;
     this.name = name;
-    this.years = [];
+    this.years = {};
+  }
+
+  addRecord(record) {
+    this.years[record.year] = record;
   }
 }
