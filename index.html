@@ -4,29 +4,78 @@
     <script src="https://d3js.org/topojson.v3.min.js"></script>
     <script src="/scripts/construct.js"></script>
     <style>
+      * {
+        font-family: Arial;
+      }
+
       .nation {
         fill: #ddd;
       }
       .outline {
-        stroke: #fff;
+        stroke: black;
         stroke-width: 1px;
         fill: none;
+      }
+      #slider_wrapper {
+        height: 80px;
+        width: 100vw;
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        background-color: rgb(48, 63, 36);
+        align-items: center;
+        box-sizing: border-box;
+        padding: 0 25px 0 25px;
+      }
+      #playPauseButton {
+        background-color: white;
+        border-radius: 25px;
+        width: 150px;
+        height: 40px;
+        outline: none;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      #playPauseButton:hover {
+        background-color: rgb(227, 227, 227);
+      }
+      #slider_title {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0 10px 0 25px;
+        color: white;
       }
     </style>
   </head>
   <body>
-    <p>hello world</p>
+    <h1>Education in the United States</h1>
+    <h2>For more detail, click on a state</h2>
+    <div id="screen_select">
+      <svg
+        id="main"
+        height="610"
+        width="975"
+        style="background: #fff; margin-top: 50px"
+      ></svg>
+    </div>
 
-    <svg
-      id="main"
-      height="610"
-      width="975"
-      style="background: #fff; margin-top: 50px"
-    ></svg>
-    <button id="next_year">next yr</button>
+    <div style="display: none" id="screen_single">
+      <p id="single_title">State:</p>
+      <button id="single_back">Back</button>
+    </div>
+
+    <div id="slider_wrapper">
+      <button id="playPauseButton">Play</button>
+      <p id="slider_title">2000</p>
+    </div>
 
     <script>
       let yearIndex = 0;
+      let selected = null;
+      let play = false;
+      let interval;
 
       // SETUP SVGS
       const mainSvg = d3.select('#main');
@@ -34,7 +83,8 @@
       const mainHeight = mainSvg.attr('height');
       const mainMap = mainSvg.append('g');
 
-      const next_year = d3.select('#next_year');
+      const playPauseButton = d3.select('#playPauseButton');
+      const back = d3.select('#single_back');
 
       async function main() {
         const [us, data] = await Promise.all([
@@ -67,21 +117,52 @@
           .attr('class', 'nation')
           .attr('d', path);
 
+        mainMap
+          .append('path')
+          .datum(statesMesh)
+          .attr('class', 'outline')
+          .attr('d', path);
+
         function renderStates(year) {
           mainMap
             .selectAll('path.states')
             .data(states.features)
             .join('path')
+            .attr('stateName', name)
             .attr('class', 'state')
             .attr('fill', (d) => score(d, year))
-            .attr('d', path);
+            .attr('d', path)
+            .on('click', selectState);
+        }
+
+        function reset() {
+          selected = null;
+          d3.select('#screen_select').style('display', 'block');
+          d3.select('#screen_single').style('display', 'none');
+          d3.select('#single_title').text('');
+        }
+
+        function selectState(e) {
+          selected = e.target.getAttribute('stateName');
+          d3.select('#screen_select').style('display', 'none');
+          d3.select('#screen_single').style('display', 'block');
+          d3.select('#single_title').text(selected);
+        }
+
+        function name(d) {
+          const state = stateDict.states[d.properties.name];
+          if (!state) return 'unspecified';
+          return state.name;
         }
 
         function score(d, year) {
           const state = stateDict.states[d.properties.name];
           if (!state) return 'grey';
           const record = state.years[year.toString()];
-          if (!record) return 'grey';
+          if (!record) {
+            console.warn('NOT FOUND', d.properties.name, year);
+            return 'grey';
+          }
           return colorScale(record.AVG_SCORE);
         }
 
@@ -89,17 +170,25 @@
           yearIndex++;
           if (yearIndex === all_years.length) yearIndex = 0;
           const new_year = all_years[yearIndex];
+          d3.select('#slider_title').text(new_year);
           renderStates(new_year);
-          d3.select('#next_year').text(new_year);
         }
 
-        next_year.on('click', () => advanceYear(years));
+        function playOrPause(all_years) {
+          if (play) {
+            d3.select('#playPauseButton').text('Play');
+            play = false;
+            clearInterval(interval);
+          } else {
+            d3.select('#playPauseButton').text('Pause');
+            play = true;
+            interval = setInterval(() => advanceYear(all_years), 1500);
+          }
+        }
 
-        // mainMap
-        //   .append('path')
-        //   .datum(statesMesh)
-        //   .attr('class', 'outline')
-        //   .attr('d', path);
+        playPauseButton.on('click', () => playOrPause(years));
+        back.on('click', reset);
+        renderStates(2000);
 
         return;
       }
