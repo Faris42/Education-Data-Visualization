@@ -1,0 +1,87 @@
+class StateDict {
+  static capFirstLetter(words) {
+    const wordArr = words.toLowerCase().split('_');
+    for (let i = 0; i < wordArr.length; i++) {
+      wordArr[i] = wordArr[i].charAt(0).toUpperCase() + wordArr[i].substring(1);
+    }
+    return wordArr.join(' ');
+  }
+
+  constructor(data) {
+    this.states = {};
+    data.forEach((r) => {
+      const record = new Record(r);
+      record.STATE = StateDict.capFirstLetter(record.STATE);
+      if (record.STATE in this.states) {
+        // push new record
+        this.states[record.STATE].addRecord(record);
+      } else {
+        const state = new State(record.STATE);
+        state.addRecord(record);
+        this.states[record.STATE] = state;
+      }
+    });
+  }
+
+  getScores(yr = null) {
+    const result = [];
+    for (const name in this.states) {
+      const state = this.states[name];
+      if (yr === null) {
+        // Get all scores for all years
+        for (const year in state.years) {
+          const record = state.years[year];
+          result.push(record.AVG_SCORE);
+        }
+      } else {
+        const record = state.years[yr];
+        result.push(record.AVG_SCORE);
+      }
+    }
+    return result;
+  }
+
+  getYears() {
+    const result = new Set();
+    for (const name in this.states) {
+      const state = this.states[name];
+      for (const year in state.years) {
+        result.add(parseInt(year));
+      }
+    }
+    return [...result].sort((a, b) => a - b);
+  }
+}
+
+class State {
+  constructor(name) {
+    this.name = name;
+    this.years = {};
+  }
+
+  addRecord(record) {
+    this.years[record.YEAR] = record;
+  }
+}
+
+class Record {
+  static toInt(str) {
+    return str ? parseInt(str) : null;
+  }
+
+  static toFloat(str) {
+    return str ? parseFloat(str) : null;
+  }
+
+  constructor(obj) {
+    const { YEAR, PRIMARY_KEY, STATE, POPULATION, ...rest } = obj;
+    for (const key in rest) {
+      // Remove empty keys and set type to float
+      if (key !== '') this[key] = Record.toFloat(rest[key]);
+    }
+    this.YEAR = Record.toInt(YEAR);
+    this.PRIMARY_KEY = PRIMARY_KEY;
+    this.STATE = STATE;
+    this.POPULATION = Record.toInt(POPULATION);
+  }
+}

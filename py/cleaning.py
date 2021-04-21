@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+
 pd.set_option('display.max_rows', None)
 data = pd.read_csv("../data/states_all_extended.csv")
 scores = pd.read_csv("../data/naep_states_summary.csv")
@@ -14,7 +16,30 @@ result = selected_data.merge(scores, left_on='PRIMARY_KEY', right_on='PRIMARY_KE
 result = result.drop(result[(result['STATE']=='NATIONAL') | (result['STATE']=='DODEA') | (result['STATE']=='DISTRICT_OF_COLUMBIA')].index)
 result = result.drop(result[(result['YEAR'] < 2000) | (result['YEAR'] > 2016)].index)
 
-# CENSUS DATA
+
+def average_scores(row):
+    count = 0
+    total = 0
+    if pd.notnull(row['AVG_MATH_4_SCORE']):
+        count += 1
+        total += row['AVG_MATH_4_SCORE']
+    if pd.notnull(row['AVG_MATH_8_SCORE']):
+        count += 1
+        total += row['AVG_MATH_8_SCORE']
+    if pd.notnull(row['AVG_READING_4_SCORE']):
+        count += 1
+        total += row['AVG_READING_4_SCORE']
+    if pd.notnull(row['AVG_READING_8_SCORE']):
+        count += 1
+        total += row['AVG_READING_8_SCORE']
+    if count == 0:
+        return None
+    return total / count
+
+result['AVG_SCORE'] = result.apply (lambda row: average_scores(row), axis=1)
+result = result.drop(result[pd.isnull(result['AVG_SCORE'])].index)
+
+# MERGING CENSUS DATA
 # csv2019_reduced = csv2019[['NAME', 'CENSUS2010POP', 'POPESTIMATE2011', 'POPESTIMATE2012', 'POPESTIMATE2013', 'POPESTIMATE2014', 'POPESTIMATE2015', 'POPESTIMATE2016', 'POPESTIMATE2017', 'POPESTIMATE2018', 'POPESTIMATE2019']]
 # csv2019_reduced.columns = ['Geographic Area', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019']
 # csv2009_reduced = csv2009[['Geographic Area', '2000', '2001', '2002' , '2003', '2004', '2005', '2006', '2007', '2008','2009']]
@@ -22,9 +47,8 @@ result = result.drop(result[(result['YEAR'] < 2000) | (result['YEAR'] > 2016)].i
 # census_data = csv2009_reduced.merge(csv2019_reduced, left_on='Geographic Area', right_on='Geographic Area')
 
 result = result.set_index('PRIMARY_KEY')
-result.to_csv('../data/temp.csv')
 
-
+# CENSUS AND POPULATION DATA
 pop_rows = []
 for index, row in census_data.iterrows():
     state = row['Geographic Area']
@@ -38,7 +62,6 @@ for index, row in census_data.iterrows():
             pop_rows.append([primary_key, row[year]])
 population = pd.DataFrame(pop_rows, columns=['PRIMARY_KEY','POPULATION'])
 result = result.merge(population, left_on='PRIMARY_KEY', right_on='PRIMARY_KEY')
-
 
 # GDP DATA
 gdp = gdp.drop(gdp[gdp['LineCode'] != 1].index)
@@ -57,4 +80,4 @@ result = result.merge(gdp_df, left_on='PRIMARY_KEY', right_on='PRIMARY_KEY')
 
 result['GDP_PER_CAPITA'] = result['GDP'] / result['POPULATION']
 
-result.to_csv('../data/filtered2.csv')
+result.to_csv('../data/final.csv')

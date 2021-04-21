@@ -1,20 +1,109 @@
 <html>
   <head>
     <script src="https://d3js.org/d3.v6.min.js"></script>
-    <!-- <script src='./' -->
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
+    <script src="/scripts/construct.js"></script>
+    <style>
+      .nation {
+        fill: #ddd;
+      }
+      .outline {
+        stroke: #fff;
+        stroke-width: 1px;
+        fill: none;
+      }
+    </style>
   </head>
   <body>
     <p>hello world</p>
-    <script>
-      async function main() {
-        const data = await d3.csv('/data/states_all_extended.csv');
 
-        console.log(data[0]);
-        console.log(data2[0]);
-        console.log(out['1992']);
+    <svg
+      id="main"
+      height="610"
+      width="975"
+      style="background: #fff; margin-top: 50px"
+    ></svg>
+    <button id="next_year">next yr</button>
+
+    <script>
+      let yearIndex = 0;
+
+      // SETUP SVGS
+      const mainSvg = d3.select('#main');
+      const mainWidth = mainSvg.attr('width');
+      const mainHeight = mainSvg.attr('height');
+      const mainMap = mainSvg.append('g');
+
+      const next_year = d3.select('#next_year');
+
+      async function main() {
+        const [us, data] = await Promise.all([
+          d3.json('/data/states-10m.json'),
+          d3.csv('/data/final.csv'),
+        ]);
+
+        const stateDict = new StateDict(data);
+        const allScores = stateDict.getScores();
+        const years = stateDict.getYears();
+        const colorScale = d3
+          .scaleQuantile()
+          .domain(allScores)
+          .range(['#94003a', '#a3593b', '#ad9138', '#afc72c', '#a8fe00']);
+
+        const projection = d3
+          .geoAlbersUsa()
+          .scale(1300)
+          .translate([487.5, 305]);
+        const path = d3.geoPath().projection(projection);
+
+        const nation = topojson.feature(us, us.objects.nation);
+        const states = topojson.feature(us, us.objects.states);
+        const statesMesh = topojson.mesh(us, us.objects.states);
+
+        mainMap
+          .selectAll('path.nation')
+          .data(nation.features)
+          .join('path')
+          .attr('class', 'nation')
+          .attr('d', path);
+
+        function renderStates(year) {
+          mainMap
+            .selectAll('path.states')
+            .data(states.features)
+            .join('path')
+            .attr('class', 'state')
+            .attr('fill', (d) => score(d, year))
+            .attr('d', path);
+        }
+
+        function score(d, year) {
+          const state = stateDict.states[d.properties.name];
+          if (!state) return 'grey';
+          const record = state.years[year.toString()];
+          if (!record) return 'grey';
+          return colorScale(record.AVG_SCORE);
+        }
+
+        function advanceYear(all_years) {
+          yearIndex++;
+          if (yearIndex === all_years.length) yearIndex = 0;
+          const new_year = all_years[yearIndex];
+          renderStates(new_year);
+          d3.select('#next_year').text(new_year);
+        }
+
+        next_year.on('click', () => advanceYear(years));
+
+        // mainMap
+        //   .append('path')
+        //   .datum(statesMesh)
+        //   .attr('class', 'outline')
+        //   .attr('d', path);
 
         return;
       }
+
       main();
     </script>
   </body>
