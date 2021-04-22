@@ -3,6 +3,8 @@
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://d3js.org/topojson.v3.min.js"></script>
     <script src="/scripts/construct.js"></script>
+    <script src="/scripts/single.js"></script>
+    <script src="/scripts/double.js"></script>
     <style>
       * {
         font-family: Arial;
@@ -53,17 +55,26 @@
     <h1>Education in the United States</h1>
     <h2>For more detail, click on a state</h2>
     <div id="screen_select">
+      <button id="switch_mode_single">Single</button>
+      <button id="switch_mode_comp">Comparison</button>
       <svg
         id="main"
-        height="610"
-        width="975"
+        height="500"
+        width="800"
         style="background: #fff; margin-top: 50px"
       ></svg>
     </div>
 
     <div style="display: none" id="screen_single">
       <p id="single_title">State:</p>
+      <svg></svg>
       <button id="single_back">Back</button>
+    </div>
+
+    <div style="display: none" id="screen_double">
+      <p id="double_title">States:</p>
+      <svg></svg>
+      <button id="double_back">Back</button>
     </div>
 
     <div id="slider_wrapper">
@@ -74,6 +85,8 @@
     <script>
       let yearIndex = 0;
       let selected = null;
+      let compSelected = [];
+      let isSingle = true;
       let play = false;
       let interval;
 
@@ -84,7 +97,10 @@
       const mainMap = mainSvg.append('g');
 
       const playPauseButton = d3.select('#playPauseButton');
-      const back = d3.select('#single_back');
+      const switchToSingle = d3.select('#switch_mode_single');
+      const switchToComp = d3.select('#switch_mode_comp');
+      const singleBack = d3.select('#single_back');
+      const compBack = d3.select('#double_back');
 
       async function main() {
         const [us, data] = await Promise.all([
@@ -100,10 +116,8 @@
           .domain(allScores)
           .range(['#94003a', '#a3593b', '#ad9138', '#afc72c', '#a8fe00']);
 
-        const projection = d3
-          .geoAlbersUsa()
-          .scale(1300)
-          .translate([487.5, 305]);
+        const projection = d3.geoAlbersUsa().scale(800);
+        // .translate([487.5, 305]);
         const path = d3.geoPath().projection(projection);
 
         const nation = topojson.feature(us, us.objects.nation);
@@ -123,7 +137,7 @@
           .attr('class', 'outline')
           .attr('d', path);
 
-        function renderStates(year) {
+        function renderStates(year, isSingle) {
           mainMap
             .selectAll('path.states')
             .data(states.features)
@@ -132,13 +146,15 @@
             .attr('class', 'state')
             .attr('fill', (d) => score(d, year))
             .attr('d', path)
-            .on('click', selectState);
+            .on('click', isSingle ? selectState : selectComp);
         }
 
         function reset() {
           selected = null;
+          compSelected = [];
           d3.select('#screen_select').style('display', 'block');
           d3.select('#screen_single').style('display', 'none');
+          d3.select('#screen_double').style('display', 'none');
           d3.select('#single_title').text('');
         }
 
@@ -147,6 +163,32 @@
           d3.select('#screen_select').style('display', 'none');
           d3.select('#screen_single').style('display', 'block');
           d3.select('#single_title').text(selected);
+          const activeYear = years[yearIndex];
+          renderSingle(stateDict, selected, years, activeYear);
+        }
+
+        function selectComp(e) {
+          // Impossible: 2+ elements in compSelected
+          if (compSelected.length > 2) {
+            console.warn('compSelected length > 2');
+            return;
+          }
+          selected = e.target.getAttribute('stateName');
+
+          if (compSelected.length === 1) {
+            // 1 element in compSelected
+            compSelected.push(selected);
+            d3.select('#screen_select').style('display', 'none');
+            d3.select('#screen_double').style('display', 'block');
+            d3.select('#double_title').text(
+              'Selected: ' + compSelected.join(', ')
+            );
+            const activeYear = years[yearIndex];
+            renderDouble(stateDict, compSelected, years, activeYear);
+          } else {
+            compSelected.push(selected);
+          }
+          return;
         }
 
         function name(d) {
@@ -171,7 +213,13 @@
           if (yearIndex === all_years.length) yearIndex = 0;
           const new_year = all_years[yearIndex];
           d3.select('#slider_title').text(new_year);
-          renderStates(new_year);
+          if (selected === null && compSelected.length === 0) {
+            renderStates(new_year, isSingle);
+          } else if (isSingle) {
+            renderSingle(stateDict, selected, years, new_year);
+          } else {
+            renderDouble(stateDict, compSelected, years, new_year);
+          }
         }
 
         function playOrPause(all_years) {
@@ -186,9 +234,26 @@
           }
         }
 
+        function singleView(all_years) {
+          reset();
+          isSingle = true;
+          const year = all_years[yearIndex];
+          renderStates(year, isSingle);
+        }
+
+        function compView(all_years) {
+          reset();
+          isSingle = false;
+          const year = all_years[yearIndex];
+          renderStates(year, isSingle);
+        }
+
         playPauseButton.on('click', () => playOrPause(years));
-        back.on('click', reset);
-        renderStates(2000);
+        switchToSingle.on('click', () => singleView(years));
+        switchToComp.on('click', () => compView(years));
+        singleBack.on('click', reset);
+        compBack.on('click', reset);
+        renderStates(2000, isSingle);
 
         return;
       }
