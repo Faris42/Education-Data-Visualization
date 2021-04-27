@@ -52,12 +52,22 @@ class StateDict {
     return [...result].sort((a, b) => a - b);
   }
 
-  getGDP(stateName, year){
-    const state = this.states[stateName]
-    const record = state.years[year]
-    return record.GDP
+  getGDP(stateName, year) {
+    const state = this.states[stateName];
+    const record = state.years[year];
+    return record.GDP;
   }
 
+  getRecord(stateName, year) {
+    const state = this.states[stateName];
+    const record = state.years[year];
+    return record;
+  }
+
+  getRecords(stateName) {
+    const state = this.states[stateName];
+    return state;
+  }
 }
 
 class State {
