@@ -23,7 +23,8 @@ class StateDict {
     });
   }
 
-  getScores(yr = null) {
+  getAllForField(yr = null, fieldName = null) {
+    if (fieldName === null) return [];
     const result = [];
     for (const name in this.states) {
       const state = this.states[name];
@@ -31,11 +32,11 @@ class StateDict {
         // Get all scores for all years
         for (const year in state.years) {
           const record = state.years[year];
-          result.push(record.AVG_SCORE);
+          result.push(record[fieldName]);
         }
       } else {
         const record = state.years[yr];
-        result.push(record.AVG_SCORE);
+        result.push(record[fieldName]);
       }
     }
     return result;
@@ -100,5 +101,6 @@ class Record {
     this.PRIMARY_KEY = PRIMARY_KEY;
     this.STATE = STATE;
     this.POPULATION = Record.toInt(POPULATION);
+    this.EXPENDITURE_PER_STUDENT = this.TOTAL_EXPENDITURE / this.ENROLL;
   }
 }
