@@ -29,7 +29,6 @@ class StateDict {
     for (const name in this.states) {
       const state = this.states[name];
       if (yr === null) {
-        // Get all scores for all years
         for (const year in state.years) {
           const record = state.years[year];
           result.push(record[fieldName]);
