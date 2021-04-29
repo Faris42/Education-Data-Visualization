@@ -34,15 +34,14 @@
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        background-color: var(--main-bg);
+        background: var(--main-bg);
         color: white;
         box-sizing: border-box;
-        padding: 10px 0 10px 0;
+        padding: 10px 0 30px 0;
       }
       #header_button_wrapper {
         display: flex;
         justify-content: center;
-        margin-top: 20px;
       }
       #slider_wrapper {
         height: 80px;
@@ -79,9 +78,21 @@
         margin: 0 10px 0 10px;
         font-size: 24px;
         background-color: darkgrey;
+        border-radius: 25px;
+        width: 200px;
+        height: 40px;
+        outline: none;
+        border: 1px solid black;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .mode_selector:hover {
+        box-shadow: black 2px 5px 10px;
       }
       .mode_selector.on {
-        background-color: white;
+        background-color: var(--main-theme);
+        color: white;
       }
       #map_wrapper {
         flex-grow: 1;
@@ -93,13 +104,35 @@
         flex-direction: column;
         height: 100vh;
       }
+      #action_item {
+        font-size: 18px;
+        font-weight: bold;
+      }
+      #state_label {
+        color: black;
+        background-color: var(--main-theme);
+      }
     </style>
   </head>
   <body>
     <div id="screen_select">
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100px;
+        "
+      >
+        <h3>2015 Educational Expenditures per Student</h3>
+        <p id="state_label"></p>
+      </div>
+      <div id="map_wrapper">
+        <svg id="main" style="background: #fff"></svg>
+      </div>
       <div id="header">
-        <h1>2015 Educational Expenditures per Student</h1>
-        <h2 style="margin: 0">For more detail, click on a state.</h2>
+        <p id="action_item">See more details by clicking on a state.</p>
         <div id="header_button_wrapper">
           <button id="switch_mode_single" class="mode_selector on">
             Single
@@ -108,9 +141,6 @@
             Comparison
           </button>
         </div>
-      </div>
-      <div id="map_wrapper">
-        <svg id="main" style="background: #fff"></svg>
       </div>
     </div>
 
@@ -139,6 +169,8 @@
       let play = false;
       let interval;
       const animationDuration = 25;
+      const hoverOpacity = 0.5;
+      const selectScreenYear = 2015;
 
       // SETUP SVGS
       const mainSvg = d3.select('#main');
@@ -147,14 +179,15 @@
       const mainWidth = mainHeight * aspectRatio;
       mainSvg.style('width', mainWidth);
       mainSvg.style('height', mainHeight);
-      console.log(mainHeight, mainWidth);
       const mainMap = mainSvg.append('g');
+      const stateLabel = d3.select('#state_label');
 
       const playPauseButton = d3.select('#playPauseButton');
       const switchToSingle = d3.select('#switch_mode_single');
       const switchToComp = d3.select('#switch_mode_comp');
       const singleBack = d3.select('#single_back');
       const compBack = d3.select('#double_back');
+      const modeSwitchLabel = d3.select('#action_item');
 
       async function main() {
         const [us, data] = await Promise.all([
@@ -246,7 +279,7 @@
             if (selected === compSelected[0]) {
               // Deselect and return.
               compSelected = [];
-              ele.style('opacity', 0.3);
+              ele.style('opacity', hoverOpacity);
               return;
             }
             compSelected.push(selected);
@@ -314,6 +347,7 @@
           renderStates(2015, isSingle);
           switchToSingle.attr('class', 'mode_selector on');
           switchToComp.attr('class', 'mode_selector');
+          modeSwitchLabel.text('See more details by clicking on a state.');
         }
 
         function compView(all_years) {
@@ -322,6 +356,7 @@
           renderStates(2015, isSingle);
           switchToComp.attr('class', 'mode_selector on');
           switchToSingle.attr('class', 'mode_selector');
+          modeSwitchLabel.text('Select two states to compare them.');
         }
 
         function onMouseOver(isComp) {
@@ -335,16 +370,23 @@
             toChange
               .transition()
               .duration(animationDuration)
-              .style('opacity', 0.3);
+              .style('opacity', hoverOpacity);
             d3.select(this)
               .transition()
               .duration(animationDuration)
               .style('opacity', 1);
+            const stateName = e.target.getAttribute('stateName');
+            stateLabel.text(
+              `${stateName}: $${stateDict
+                .getRecord(stateName, selectScreenYear)
+                .EXPENDITURE_PER_STUDENT.toFixed(2)}`
+            );
           };
         }
 
         function onMouseLeave(isComp) {
           return function (e) {
+            stateLabel.text('');
             if (!isComp) {
               d3.selectAll('path.state')
                 .transition()
@@ -358,7 +400,7 @@
                 })
                 .transition()
                 .duration(animationDuration)
-                .style('opacity', 0.3);
+                .style('opacity', hoverOpacity);
             } else {
               d3.selectAll('path.state')
                 .transition()
