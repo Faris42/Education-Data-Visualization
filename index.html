@@ -2,9 +2,9 @@
   <head>
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://d3js.org/topojson.v3.min.js"></script>
-    <script src="/scripts/construct.js"></script>
-    <script src="/scripts/single.js"></script>
-    <script src="/scripts/double.js"></script>
+    <script src="scripts/construct.js"></script>
+    <script src="scripts/single.js"></script>
+    <script src="scripts/double.js"></script>
     <style>
       * {
         font-family: Arial;
@@ -73,7 +73,11 @@
 
     <div style="display: none" id="screen_double">
       <p id="double_title">States:</p>
-      <svg></svg>
+      <svg id="doubleSvg"
+      height="600"
+      width="800"
+      style="background: #fff; margin-top: 50px"
+      ></svg>
       <button id="double_back">Back</button>
     </div>
 
