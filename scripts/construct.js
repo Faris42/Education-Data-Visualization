@@ -101,5 +101,6 @@ class Record {
     this.STATE = STATE;
     this.POPULATION = Record.toInt(POPULATION);
     this.EXPENDITURE_PER_STUDENT = this.TOTAL_EXPENDITURE / this.ENROLL;
+    this.AVG_SCORE_PERCENTAGE = this.AVG_SCORE / 500;
   }
 }
