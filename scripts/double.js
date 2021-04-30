@@ -42,23 +42,26 @@ async function renderDouble(sd, stateNames, yrs, activeYear) {
   console.log(state2.GDP);
   //console.log(sd.getRecord(stateNames[0], activeYear));
 
+  const values = ['GDP', 'GDP_PER_CAPITA', 'INSTRUCTION_EXPENDITURE'];
 
-  const values = ["GDP", "GDP_PER_CAPITA", "INSTRUCTION_EXPENDITURE"]
-
-  const div = d3.select("div#screen_double");
+  const div = d3.select('div#screen_double');
   // div.style("display", "block");
 
-  const svg = d3.select("svg#doubleSvg");
-  const width = svg.attr("width");
-  const height = svg.attr("height");
-  const style = svg.attr("style");
-  const margin = {top: 10, right: 10, bottom: 10, left: 10};
+  const svg = d3.select('svg#doubleSvg');
+  const width = svg.attr('width');
+  const height = svg.attr('height');
+  const style = svg.attr('style');
+  const margin = { top: 10, right: 10, bottom: 10, left: 10 };
   const chartWidth = width - margin.left - margin.right;
   const chartHeight = height - margin.top - margin.bottom;
 
-  let annotations = svg.append("g").attr("id","annotations");
-  let chartArea = svg.append("g").attr("id","points")
-                  .attr("transform",`translate(${margin.left},${margin.top})`);
+  let annotations = svg.append('g').attr('id', 'annotations');
+  let chartArea = svg
+    .append('g')
+    .attr('id', 'points')
+    .attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const percentScale = d3.scaleLinear().domain([0, 1]).range([0, chartWidth]);
 
   const percentScale = d3.scaleLinear().domain([0,1]).range([0, chartWidth]);
   

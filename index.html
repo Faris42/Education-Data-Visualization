@@ -162,9 +162,17 @@
       </div>
     </div>
 
-    <div style="display: none" id="screen_single">
+    <div
+      style="
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      "
+      id="screen_single"
+    >
       <p id="single_title">State:</p>
-      <svg id="singleSvg"></svg>
+      <svg id="singleSvg" height="600" width="800"></svg>
       <button id="single_back">Back</button>
     </div>
 
@@ -283,7 +291,7 @@
           selected = e.target.getAttribute('stateName');
           d3.select('#screen_select').style('display', 'none');
           d3.select('#slider_wrapper').style('display', 'flex');
-          d3.select('#screen_single').style('display', 'block');
+          d3.select('#screen_single').style('display', 'flex');
           d3.select('#single_title').text(selected);
           const activeYear = years[yearIndex];
           renderSingle(stateDict, selected, years, activeYear);
