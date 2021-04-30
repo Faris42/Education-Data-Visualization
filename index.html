@@ -2,6 +2,7 @@
   <head>
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://d3js.org/topojson.v3.min.js"></script>
+    <script src="scripts/numberFormatting.js"></script>
     <script src="scripts/construct.js"></script>
     <script src="scripts/single.js"></script>
     <script src="scripts/double.js"></script>
@@ -123,6 +124,11 @@
         border-radius: 25px;
         margin: 0;
         font-weight: bold;
+        display: flex;
+        flex-direction: column;
+      }
+      #state_label.line_item {
+        width: 100%;
       }
     </style>
   </head>
@@ -137,8 +143,22 @@
           height: 100px;
         "
       >
-        <h3>2015 Educational Expenditures per Student</h3>
-        <p id="state_label" style="visibility: hidden">State: Dollars</p>
+        <div id="state_label" style="visibility: hidden">
+          <p
+            style="text-align: center; font-weight: bold"
+            class="line_item"
+            id="state_label_name"
+          >
+            State
+          </p>
+          <p class="line_item" id="state_label_expenditures">
+            Expenditures per Student: $0.00
+          </p>
+          <p class="line_item" id="state_label_gdp">GDP per Capita: $0.00</p>
+          <p class="line_item" id="state_label_scores">
+            Average Test Score: 0.00%
+          </p>
+        </div>
       </div>
       <div id="map_wrapper">
         <svg id="main" style="background: #fff"></svg>
@@ -408,14 +428,22 @@
               .duration(animationDuration)
               .style('opacity', 1);
             const stateName = e.target.getAttribute('stateName');
-            stateLabel
-              .style('visibility', 'visible')
-              .text(
-                `${stateName}: $${(
-                  stateDict.getRecord(stateName, selectScreenYear)
-                    .EXPENDITURE_PER_STUDENT * 1000
-                ).toLocaleString(undefined, { maximumFractionDigits: 2 })}`
-              );
+            const record = stateDict.getRecord(stateName, selectScreenYear);
+            d3.select('#state_label_name').text(`${stateName}`);
+            d3.select('#state_label_expenditures').text(
+              `Expenditures per student: ${floatToDollars(
+                record.EXPENDITURE_PER_STUDENT * 1000
+              )}`
+            );
+            d3.select('#state_label_gdp').text(`
+                GDP per Captia: ${floatToDollars(record.GDP_PER_CAPITA * 1000)}
+            `);
+            d3.select('#state_label_scores').text(`
+                Average test score: ${decimalToPercent(
+                  record.AVG_SCORE_PERCENTAGE
+                )}
+            `);
+            stateLabel.style('visibility', 'visible');
           };
         }
 
