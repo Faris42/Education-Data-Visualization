@@ -101,10 +101,13 @@
         flex-grow: 1;
         display: flex;
         justify-content: center;
+        align-items: center;
       }
       #legend_wrapper {
         display: flex;
         justify-content: center;
+        align-items: center;
+        flex-direction: column;
         margin-top: 40px;
       }
       #screen_select {
@@ -120,54 +123,66 @@
         color: white;
         background-color: var(--main-theme);
         box-sizing: border-box;
-        padding: 5px 10px 5px 10px;
+        padding: 20px 20px 20px 20px;
         border-radius: 25px;
-        margin: 0;
-        font-weight: bold;
+        margin: 0 50px 0 0;
         display: flex;
         flex-direction: column;
+        min-width: 320px;
+        box-shadow: grey 5px 5px 10px;
       }
-      #state_label.line_item {
+      .line_item {
         width: 100%;
+        margin: 2px 0 2px 0;
+        display: flex;
+        justify-content: space-between;
       }
     </style>
   </head>
   <body>
     <div id="screen_select">
-      <div
-        style="
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          height: 100px;
-        "
-      >
+      <div id="map_wrapper">
+        <div id="map_column" style="display: flex; flex-grow: 1">
+          <svg id="main" style="background: #fff"></svg>
+        </div>
         <div id="state_label" style="visibility: hidden">
           <p
-            style="text-align: center; font-weight: bold"
-            class="line_item"
+            style="
+              text-align: center;
+              font-weight: bold;
+              margin: 0 0 10px 0;
+              font-size: 24px;
+            "
             id="state_label_name"
           >
             State
           </p>
-          <p class="line_item" id="state_label_expenditures">
-            Expenditures per Student: $0.00
-          </p>
-          <p class="line_item" id="state_label_gdp">GDP per Capita: $0.00</p>
-          <p class="line_item" id="state_label_scores">
-            Average Test Score: 0.00%
-          </p>
+          <div class="line_item">
+            <span>Expenditures per Student: </span>
+            <span id="state_label_expenditures"> $0.00 </span>
+          </div>
+          <div class="line_item">
+            <span>GDP per Capita: </span>
+            <span id="state_label_gdp">$0.00</span>
+          </div>
+          <div class="line_item">
+            <span>Average NAEP Test Score:</span>
+            <span id="state_label_scores">0.00%</span>
+          </div>
         </div>
       </div>
-      <div id="map_wrapper">
-        <svg id="main" style="background: #fff"></svg>
-      </div>
       <div id="legend_wrapper">
-        <svg id="map_legend" height="50" width="500"></svg>
-        <p style="margin: 0; font-style: italic; font-size: 14px">
-          Thousands, $ USD
+        <p
+          style="
+            margin: 0 0 10px 0;
+            font-style: italic;
+            font-weight: bold;
+            font-size: 14px;
+          "
+        >
+          Expenditures per student in thousands of USD (2015)
         </p>
+        <svg id="map_legend" height="50" width="500"></svg>
       </div>
       <div id="header">
         <p id="action_item">See more details by clicking on a state.</p>
@@ -225,9 +240,12 @@
 
       // SETUP SVGS
       const mainSvg = d3.select('#main');
-      const aspectRatio = 2;
-      const mainHeight = parseInt(d3.select('#map_wrapper').style('height'));
-      const mainWidth = mainHeight * aspectRatio;
+      // const aspectRatio = 2;
+      // const mainHeight = parseInt(d3.select('#map_wrapper').style('height'));
+      // const mainWidth = mainHeight * aspectRatio;
+      const aspectRatio = 0.5;
+      const mainWidth = parseInt(d3.select('#map_column').style('width'));
+      const mainHeight = mainWidth * aspectRatio;
       mainSvg.style('width', mainWidth);
       mainSvg.style('height', mainHeight);
       const mainMap = mainSvg.append('g');
@@ -431,17 +449,13 @@
             const record = stateDict.getRecord(stateName, selectScreenYear);
             d3.select('#state_label_name').text(`${stateName}`);
             d3.select('#state_label_expenditures').text(
-              `Expenditures per student: ${floatToDollars(
-                record.EXPENDITURE_PER_STUDENT * 1000
-              )}`
+              `${floatToDollars(record.EXPENDITURE_PER_STUDENT * 1000)}`
             );
             d3.select('#state_label_gdp').text(`
-                GDP per Captia: ${floatToDollars(record.GDP_PER_CAPITA * 1000)}
+                ${floatToDollars(record.GDP_PER_CAPITA * 1000000)}
             `);
             d3.select('#state_label_scores').text(`
-                Average test score: ${decimalToPercent(
-                  record.AVG_SCORE_PERCENTAGE
-                )}
+               ${decimalToPercent(record.AVG_SCORE_PERCENTAGE)}
             `);
             stateLabel.style('visibility', 'visible');
           };
