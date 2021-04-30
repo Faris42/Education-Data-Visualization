@@ -25,7 +25,9 @@
       #screen_landing {
         width: 100vw;
         height: 100vh;
-        background: linear-gradient(var(--main-theme), var(--main-bg));
+        /* background: linear-gradient(var(--main-theme), var(--main-bg)); */
+        background: linear-gradient(rgb(135, 135, 135), var(--main-theme));
+
         display: flex;
         justify-content: center;
         align-items: center;
@@ -36,6 +38,7 @@
       }
       #screen_landing p {
         margin: 2px 0 2px 0;
+        font-size: 14px;
       }
 
       #enter_button {
@@ -182,13 +185,26 @@
   <body>
     <div id="screen_landing">
       <h1>Expenditures and Achievement: An Exploration of US Education</h1>
-      <p style="color: lightgrey; font-size: 14px">
-        Adrian Lee, Faris Aziz, Reza Madhavan
+      <p
+        style="
+          color: lightgrey;
+          max-width: 950px;
+          margin-bottom: 20px;
+          text-align: center;
+          font-size: 18px;
+        "
+      >
+        Socioeconomic factors, municipal budgets, and the efficiency of dollars
+        spent all contribute to a child's success. This page explores metrics
+        across states and helps paint a better picture of differences in
+        education across the nation.
       </p>
-      <p style="font-style: italic; color: lightgrey; font-size: 14px">
-        awl68, fsa22, rm855
-      </p>
+
       <button id="enter_button">Enter</button>
+      <div style="position: fixed; bottom: 25px; right: 50px">
+        <p style="color: lightgrey">Adrian Lee, Faris Aziz, Reza Madhavan</p>
+        <p style="font-style: italic; color: lightgrey">awl68, fsa22, rm855</p>
+      </div>
     </div>
     <div id="screen_select" style="display: none">
       <div id="header">
