@@ -102,7 +102,26 @@ async function renderDouble(sd, stateNames, yrs, activeYear) {
             .attr("width", percentScale(percent2))
             .attr("height", 50)
             .attr("fill", "blue");
+
+
+  // let path = d3.path();
+
+  // path.moveTo(percentScale(0.5), yCounter-10);
+  // path.lineTo(percentScale(0.5), yCounter+59);
   
+  // chartArea.append("path")
+  //           .attr("class", "line")
+  //           .attr("d", path)
+  //           .style("stroke-dasharray", ("3, 3"))
+
+  chartArea.append("line")
+      .attr("x1", percentScale(.5))
+      .attr("x2", percentScale(.5))
+      .attr("y1", yCounter-10)
+      .attr("y2", yCounter+59)
+      .style("stroke-dasharray","5,5")//dashed array for line
+      .style("stroke", "black");
+            
   chartArea.append("text")
             .attr("x", percentScale(percent1) - 5)
             .attr("y", yCounter+60)
