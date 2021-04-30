@@ -195,8 +195,8 @@
 
       async function main() {
         const [us, data] = await Promise.all([
-          d3.json('/data/states-10m.json'),
-          d3.csv('/data/final.csv'),
+          d3.json('data/states-10m.json'),
+          d3.csv('data/final.csv'),
         ]);
 
         const stateDict = new StateDict(data);
