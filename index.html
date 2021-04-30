@@ -9,74 +9,54 @@
     <script src="scripts/from_class.js"></script>
 
     <style>
+      /* ========GLOBAL STYLES======== */
       :root {
         --main-theme: #2a87b7;
         --main-bg: rgb(58, 58, 58);
       }
-
       body {
         margin: 0;
       }
       * {
         font-family: Arial;
       }
-      .state {
-        stroke: black;
-        cursor: pointer;
-      }
-      .nation {
-        fill: #ddd;
-      }
-      .outline {
-        stroke: black;
-        stroke-width: 3px;
-        fill: none;
-      }
-      #header {
+
+      /* ========LANDING STYLES======== */
+      #screen_landing {
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(var(--main-theme), var(--main-bg));
         display: flex;
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        background: var(--main-bg);
+      }
+      #screen_landing * {
         color: white;
-        box-sizing: border-box;
-        padding: 30px 0 10px 0;
       }
-      #header_button_wrapper {
-        display: flex;
-        justify-content: center;
+      #screen_landing p {
+        margin: 2px 0 2px 0;
       }
-      #slider_wrapper {
-        height: 80px;
-        width: 100vw;
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        background-color: var(--main-bg);
-        align-items: center;
-        box-sizing: border-box;
-        padding: 0 25px 0 25px;
-      }
-      #playPauseButton {
-        background-color: white;
+
+      #enter_button {
+        margin: 30px 10px 0 10px;
+        font-size: 24px;
+        background-color: var(--main-theme);
+        color: white;
         border-radius: 25px;
-        width: 150px;
+        width: 200px;
         height: 40px;
         outline: none;
+        border: 1px solid black;
         font-size: 24px;
         font-weight: bold;
         cursor: pointer;
       }
-      #playPauseButton:hover {
-        background-color: rgb(227, 227, 227);
+      #enter_button:hover {
+        box-shadow: black 2px 2px 10px;
       }
-      #slider_title {
-        font-size: 24px;
-        font-weight: bold;
-        margin: 0 10px 0 25px;
-        color: white;
-      }
+
+      /* ========SELECT SCREEN STYLES======== */
       .mode_selector {
         margin: 0 10px 0 10px;
         font-size: 24px;
@@ -138,10 +118,79 @@
         display: flex;
         justify-content: space-between;
       }
+      .state {
+        stroke: black;
+        cursor: pointer;
+      }
+      .nation {
+        fill: #ddd;
+      }
+      .outline {
+        stroke: black;
+        stroke-width: 3px;
+        fill: none;
+      }
+      #header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        background: var(--main-bg);
+        color: white;
+        box-sizing: border-box;
+        padding: 30px 0 10px 0;
+      }
+      #header_button_wrapper {
+        display: flex;
+        justify-content: center;
+      }
+
+      /* ========SLIDER STYLES======== */
+      #slider_wrapper {
+        height: 80px;
+        width: 100vw;
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        background-color: var(--main-bg);
+        align-items: center;
+        box-sizing: border-box;
+        padding: 0 25px 0 25px;
+      }
+      #playPauseButton {
+        background-color: white;
+        border-radius: 25px;
+        width: 150px;
+        height: 40px;
+        outline: none;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      #playPauseButton:hover {
+        background-color: rgb(227, 227, 227);
+      }
+      #slider_title {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0 10px 0 25px;
+        color: white;
+      }
     </style>
   </head>
   <body>
-    <div id="screen_select">
+    <div id="screen_landing">
+      <h1>Expenditures and Achievement: An Exploration of US Education</h1>
+      <p style="color: lightgrey; font-size: 14px">
+        Adrian Lee, Faris Aziz, Reza Madhavan
+      </p>
+      <p style="font-style: italic; color: lightgrey; font-size: 14px">
+        awl68, fsa22, rm855
+      </p>
+      <button id="enter_button">Enter</button>
+    </div>
+    <div id="screen_select" style="display: none">
       <div id="header">
         <div id="header_button_wrapper">
           <button id="switch_mode_single" class="mode_selector on">
@@ -229,46 +278,51 @@
     </div>
 
     <script>
-      let yearIndex = 0;
-      let selected = null;
-      let compSelected = [];
-      let isSingle = true;
-      let play = false;
-      let interval;
-      const animationDuration = 25;
-      const hoverOpacity = 0.5;
-      const selectScreenYear = 2015;
-
-      // SETUP SVGS AND RESPONSIVE LAYOUTS
-      const mainSvg = d3.select('#main');
-      let aspectRatio = 0.5;
-      let mainWidth = parseInt(d3.select('#map_column').style('width'));
-      let mainHeight = mainWidth * aspectRatio;
-      const leftOver =
-        window.innerHeight -
-        parseInt(d3.select('#header').style('height')) -
-        parseInt(d3.select('#legend_wrapper').style('height')) -
-        parseInt(d3.select('#legend_wrapper').style('margin-top'));
-
-      if (mainHeight > leftOver) {
-        aspectRatio = 2;
-        mainHeight = leftOver;
-        mainWidth = mainHeight * aspectRatio;
-      }
-      mainSvg.style('width', mainWidth);
-      mainSvg.style('height', mainHeight);
-      const mainMap = mainSvg.append('g');
-      const stateLabel = d3.select('#state_label');
-      const mapLegend = d3.select('#map_legend');
-
-      const playPauseButton = d3.select('#playPauseButton');
-      const switchToSingle = d3.select('#switch_mode_single');
-      const switchToComp = d3.select('#switch_mode_comp');
-      const singleBack = d3.select('#single_back');
-      const compBack = d3.select('#double_back');
-      const modeSwitchLabel = d3.select('#action_item');
+      const enterButton = d3.select('#enter_button');
 
       async function main() {
+        d3.select('#screen_landing').style('display', 'none');
+        d3.select('#screen_select').style('display', 'block');
+
+        let yearIndex = 0;
+        let selected = null;
+        let compSelected = [];
+        let isSingle = true;
+        let play = false;
+        let interval;
+        const animationDuration = 25;
+        const hoverOpacity = 0.5;
+        const selectScreenYear = 2015;
+
+        // SETUP SVGS AND RESPONSIVE LAYOUTS
+        const mainSvg = d3.select('#main');
+        let aspectRatio = 0.5;
+        let mainWidth = parseInt(d3.select('#map_column').style('width'));
+        let mainHeight = mainWidth * aspectRatio;
+        const leftOver =
+          window.innerHeight -
+          parseInt(d3.select('#header').style('height')) -
+          parseInt(d3.select('#legend_wrapper').style('height')) -
+          parseInt(d3.select('#legend_wrapper').style('margin-top'));
+
+        if (mainHeight > leftOver) {
+          aspectRatio = 2;
+          mainHeight = leftOver;
+          mainWidth = mainHeight * aspectRatio;
+        }
+        mainSvg.style('width', mainWidth);
+        mainSvg.style('height', mainHeight);
+        const mainMap = mainSvg.append('g');
+        const stateLabel = d3.select('#state_label');
+        const mapLegend = d3.select('#map_legend');
+
+        const playPauseButton = d3.select('#playPauseButton');
+        const switchToSingle = d3.select('#switch_mode_single');
+        const switchToComp = d3.select('#switch_mode_comp');
+        const singleBack = d3.select('#single_back');
+        const compBack = d3.select('#double_back');
+        const modeSwitchLabel = d3.select('#action_item');
+
         const [us, data] = await Promise.all([
           d3.json('data/states-10m.json'),
           d3.csv('data/final.csv'),
@@ -501,13 +555,14 @@
         switchToComp.on('click', () => compView(years));
         singleBack.on('click', reset);
         compBack.on('click', reset);
+
         renderStates(2015, isSingle);
         drawLegend(mapLegend, colorScale);
 
         return;
       }
 
-      main();
+      enterButton.on('click', main);
     </script>
   </body>
 </html>
