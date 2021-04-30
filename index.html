@@ -239,7 +239,7 @@
       const hoverOpacity = 0.5;
       const selectScreenYear = 2015;
 
-      // SETUP SVGS
+      // SETUP SVGS AND RESPONSIVE LAYOUTS
       const mainSvg = d3.select('#main');
       let aspectRatio = 0.5;
       let mainWidth = parseInt(d3.select('#map_column').style('width'));
@@ -250,14 +250,7 @@
         parseInt(d3.select('#legend_wrapper').style('height')) -
         parseInt(d3.select('#legend_wrapper').style('margin-top'));
 
-      console.log(window.innerHeight, d3.select('#header').style('height'));
       if (mainHeight > leftOver) {
-        console.log(
-          'OVER@!',
-          window.innerHeight,
-          leftOver,
-          d3.select('#header').style('height')
-        );
         aspectRatio = 2;
         mainHeight = leftOver;
         mainWidth = mainHeight * aspectRatio;
