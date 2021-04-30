@@ -40,7 +40,7 @@
         background: var(--main-bg);
         color: white;
         box-sizing: border-box;
-        padding: 10px 0 30px 0;
+        padding: 30px 0 10px 0;
       }
       #header_button_wrapper {
         display: flex;
@@ -109,6 +109,7 @@
         align-items: center;
         flex-direction: column;
         margin-top: 40px;
+        height: 80px;
       }
       #screen_select {
         display: flex;
@@ -141,6 +142,17 @@
   </head>
   <body>
     <div id="screen_select">
+      <div id="header">
+        <div id="header_button_wrapper">
+          <button id="switch_mode_single" class="mode_selector on">
+            Single
+          </button>
+          <button id="switch_mode_comp" class="mode_selector">
+            Comparison
+          </button>
+        </div>
+        <p id="action_item">See more details by clicking on a state.</p>
+      </div>
       <div id="map_wrapper">
         <div id="map_column" style="display: flex; flex-grow: 1">
           <svg id="main" style="background: #fff"></svg>
@@ -183,17 +195,6 @@
           Expenditures per student in thousands of USD (2015)
         </p>
         <svg id="map_legend" height="50" width="500"></svg>
-      </div>
-      <div id="header">
-        <p id="action_item">See more details by clicking on a state.</p>
-        <div id="header_button_wrapper">
-          <button id="switch_mode_single" class="mode_selector on">
-            Single
-          </button>
-          <button id="switch_mode_comp" class="mode_selector">
-            Comparison
-          </button>
-        </div>
       </div>
     </div>
 
@@ -240,12 +241,27 @@
 
       // SETUP SVGS
       const mainSvg = d3.select('#main');
-      // const aspectRatio = 2;
-      // const mainHeight = parseInt(d3.select('#map_wrapper').style('height'));
-      // const mainWidth = mainHeight * aspectRatio;
-      const aspectRatio = 0.5;
-      const mainWidth = parseInt(d3.select('#map_column').style('width'));
-      const mainHeight = mainWidth * aspectRatio;
+      let aspectRatio = 0.5;
+      let mainWidth = parseInt(d3.select('#map_column').style('width'));
+      let mainHeight = mainWidth * aspectRatio;
+      const leftOver =
+        window.innerHeight -
+        parseInt(d3.select('#header').style('height')) -
+        parseInt(d3.select('#legend_wrapper').style('height')) -
+        parseInt(d3.select('#legend_wrapper').style('margin-top'));
+
+      console.log(window.innerHeight, d3.select('#header').style('height'));
+      if (mainHeight > leftOver) {
+        console.log(
+          'OVER@!',
+          window.innerHeight,
+          leftOver,
+          d3.select('#header').style('height')
+        );
+        aspectRatio = 2;
+        mainHeight = leftOver;
+        mainWidth = mainHeight * aspectRatio;
+      }
       mainSvg.style('width', mainWidth);
       mainSvg.style('height', mainHeight);
       const mainMap = mainSvg.append('g');
