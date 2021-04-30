@@ -63,44 +63,92 @@ async function renderDouble(sd, stateNames, yrs, activeYear) {
 
   const percentScale = d3.scaleLinear().domain([0, 1]).range([0, chartWidth]);
 
-  let yCounter = 100;
+  const percentScale = d3.scaleLinear().domain([0,1]).range([0, chartWidth]);
+  
+  let yCounter = 30;
   values.forEach(function (v) {
-    let value1 = state1[v];
-    let value2 = state2[v];
 
-    let percent1 = value1 / (value1 + value2);
-    let percent2 = value2 / (value1 + value2);
+  let value1 = state1[v];
+  let value2 = state2[v];
 
-    // console.log(value1);
-    // console.log(percent1);
-    // console.log(value2);
-    // console.log(percent2);
+  let percent1 = value1 / (value1+value2);
+  let percent2 = value2 / (value1+value2);
 
-    let text = v;
+  // console.log(value1);
+  // console.log(percent1);
+  // console.log(value2);
+  // console.log(percent2);
 
-    // chartArea.append("text")
-    //           .attr("x", 25)
-    //           .attr("y", yCounter-25)
-    //           .style("font: 40px sans serif black;")
-    //           .text(text)
+  let text = v.replaceAll("_", " ");
+  text = text.toLowerCase();
+  text = capitalize_Words(text);
 
-    chartArea
-      .append('rect')
-      .attr('x', 0)
-      .attr('y', yCounter)
-      .attr('width', percentScale(percent1))
-      .attr('height', 50)
-      .attr('fill', 'red');
+  chartArea.append("text")
+            .attr("x", 0)
+            .attr("y", yCounter-25)
+            .attr("text-anchor", "start")
+            .attr("dominant-baseline", "hanging")
+            .style("font", "14px Arial")
+            .style("font-weight", "bold")
+            .text(text)
 
-    chartArea
-      .append('rect')
-      .attr('x', percentScale(percent1))
-      .attr('y', yCounter)
-      .attr('width', percentScale(percent2))
-      .attr('height', 50)
-      .attr('fill', 'blue');
+  chartArea.append("rect")
+            .attr("x", 0)
+            .attr("y", yCounter)
+            .attr("width", percentScale(percent1))
+            .attr("height", 50)
+            .attr("fill", "red");
 
-    yCounter += 100;
+  chartArea.append("rect")
+            .attr("x", percentScale(percent1))
+            .attr("y", yCounter)
+            .attr("width", percentScale(percent2))
+            .attr("height", 50)
+            .attr("fill", "blue");
+
+
+  // let path = d3.path();
+
+  // path.moveTo(percentScale(0.5), yCounter-10);
+  // path.lineTo(percentScale(0.5), yCounter+59);
+  
+  // chartArea.append("path")
+  //           .attr("class", "line")
+  //           .attr("d", path)
+  //           .style("stroke-dasharray", ("3, 3"))
+
+  chartArea.append("line")
+      .attr("x1", percentScale(.5))
+      .attr("x2", percentScale(.5))
+      .attr("y1", yCounter-10)
+      .attr("y2", yCounter+59)
+      .style("stroke-dasharray","5,5")//dashed array for line
+      .style("stroke", "black");
+            
+  chartArea.append("text")
+            .attr("x", percentScale(percent1) - 5)
+            .attr("y", yCounter+60)
+            .attr("text-anchor", "end")
+            .attr("dominant-baseline", "hanging")
+            .style("font", "14px Arial")
+            .text(value1)
+  
+  chartArea.append("text")
+            .attr("x", percentScale(percent1) + 5)
+            .attr("y", yCounter+60)
+            .attr("text-anchor", "start")
+            .attr("dominant-baseline", "hanging")
+            .style("font", "14px Arial")
+            .text(value2)
+  
+  yCounter+= 150;
+
+  
   });
   return;
+}
+
+function capitalize_Words(str)
+{
+ return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }

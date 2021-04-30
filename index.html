@@ -5,6 +5,8 @@
     <script src="scripts/construct.js"></script>
     <script src="scripts/single.js"></script>
     <script src="scripts/double.js"></script>
+    <script src="scripts/from_class.js"></script>
+
     <style>
       :root {
         --main-theme: #2a87b7;
@@ -99,6 +101,11 @@
         display: flex;
         justify-content: center;
       }
+      #legend_wrapper {
+        display: flex;
+        justify-content: center;
+        margin-top: 40px;
+      }
       #screen_select {
         display: flex;
         flex-direction: column;
@@ -109,8 +116,13 @@
         font-weight: bold;
       }
       #state_label {
-        color: black;
+        color: white;
         background-color: var(--main-theme);
+        box-sizing: border-box;
+        padding: 5px 10px 5px 10px;
+        border-radius: 25px;
+        margin: 0;
+        font-weight: bold;
       }
     </style>
   </head>
@@ -126,10 +138,16 @@
         "
       >
         <h3>2015 Educational Expenditures per Student</h3>
-        <p id="state_label"></p>
+        <p id="state_label" style="visibility: hidden">State: Dollars</p>
       </div>
       <div id="map_wrapper">
         <svg id="main" style="background: #fff"></svg>
+      </div>
+      <div id="legend_wrapper">
+        <svg id="map_legend" height="50" width="500"></svg>
+        <p style="margin: 0; font-style: italic; font-size: 14px">
+          Thousands, $ USD
+        </p>
       </div>
       <div id="header">
         <p id="action_item">See more details by clicking on a state.</p>
@@ -194,6 +212,7 @@
       mainSvg.style('height', mainHeight);
       const mainMap = mainSvg.append('g');
       const stateLabel = d3.select('#state_label');
+      const mapLegend = d3.select('#map_legend');
 
       const playPauseButton = d3.select('#playPauseButton');
       const switchToSingle = d3.select('#switch_mode_single');
@@ -204,8 +223,8 @@
 
       async function main() {
         const [us, data] = await Promise.all([
-          d3.json('/data/states-10m.json'),
-          d3.csv('/data/final.csv'),
+          d3.json('data/states-10m.json'),
+          d3.csv('data/final.csv'),
         ]);
 
         const stateDict = new StateDict(data);
@@ -217,7 +236,7 @@
         const colorScale = d3
           .scaleQuantile()
           .domain(domain)
-          .range(['#202c49', '#274c6f', '#296289', '#2979a3', '#16b6eb']);
+          .range(['#202c49', '#274c6f', '#2979a3', '#16b6eb']);
 
         const projection = d3
           .geoAlbersUsa()
@@ -389,17 +408,20 @@
               .duration(animationDuration)
               .style('opacity', 1);
             const stateName = e.target.getAttribute('stateName');
-            stateLabel.text(
-              `${stateName}: $${stateDict
-                .getRecord(stateName, selectScreenYear)
-                .EXPENDITURE_PER_STUDENT.toFixed(2)}`
-            );
+            stateLabel
+              .style('visibility', 'visible')
+              .text(
+                `${stateName}: $${(
+                  stateDict.getRecord(stateName, selectScreenYear)
+                    .EXPENDITURE_PER_STUDENT * 1000
+                ).toLocaleString(undefined, { maximumFractionDigits: 2 })}`
+              );
           };
         }
 
         function onMouseLeave(isComp) {
           return function (e) {
-            stateLabel.text('');
+            stateLabel.style('visibility', 'hidden');
             if (!isComp) {
               d3.selectAll('path.state')
                 .transition()
@@ -429,6 +451,7 @@
         singleBack.on('click', reset);
         compBack.on('click', reset);
         renderStates(2015, isSingle);
+        drawLegend(mapLegend, colorScale);
 
         return;
       }
