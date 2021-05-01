@@ -2,22 +2,125 @@
   <head>
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://d3js.org/topojson.v3.min.js"></script>
+    <script src="scripts/numberFormatting.js"></script>
     <script src="scripts/construct.js"></script>
     <script src="scripts/single.js"></script>
     <script src="scripts/double.js"></script>
     <script src="scripts/from_class.js"></script>
 
     <style>
+      /* ========GLOBAL STYLES======== */
       :root {
         --main-theme: #2a87b7;
         --main-bg: rgb(58, 58, 58);
       }
-
       body {
         margin: 0;
       }
       * {
         font-family: Arial;
+      }
+
+      /* ========LANDING STYLES======== */
+      #screen_landing {
+        width: 100vw;
+        height: 100vh;
+        /* background: linear-gradient(var(--main-theme), var(--main-bg)); */
+        background: linear-gradient(rgb(135, 135, 135), var(--main-theme));
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+      #screen_landing * {
+        color: white;
+      }
+      #screen_landing p {
+        margin: 2px 0 2px 0;
+        font-size: 14px;
+      }
+
+      #enter_button {
+        margin: 30px 10px 0 10px;
+        font-size: 24px;
+        background-color: var(--main-theme);
+        color: white;
+        border-radius: 25px;
+        width: 200px;
+        height: 40px;
+        outline: none;
+        border: 1px solid black;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      #enter_button:hover {
+        box-shadow: black 2px 2px 10px;
+      }
+
+      /* ========SELECT SCREEN STYLES======== */
+      .mode_selector {
+        margin: 0 10px 0 10px;
+        font-size: 24px;
+        background-color: darkgrey;
+        border-radius: 25px;
+        width: 200px;
+        height: 40px;
+        outline: none;
+        border: 1px solid black;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .mode_selector:hover {
+        box-shadow: black 2px 5px 10px;
+      }
+      .mode_selector.on {
+        background-color: var(--main-theme);
+        color: white;
+      }
+      #map_wrapper {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      #legend_wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        margin-top: 40px;
+        height: 80px;
+      }
+      #screen_select {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        background: linear-gradient(var(--main-bg), white);
+      }
+      #action_item {
+        font-size: 18px;
+        font-weight: bold;
+      }
+      #state_label {
+        color: white;
+        background-color: var(--main-theme);
+        box-sizing: border-box;
+        padding: 20px 20px 20px 20px;
+        border-radius: 25px;
+        margin: 0 50px 0 0;
+        display: flex;
+        flex-direction: column;
+        min-width: 320px;
+        box-shadow: grey 5px 5px 10px;
+      }
+      .line_item {
+        width: 100%;
+        margin: 2px 0 2px 0;
+        display: flex;
+        justify-content: space-between;
       }
       .state {
         stroke: black;
@@ -36,15 +139,16 @@
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        background: var(--main-bg);
         color: white;
         box-sizing: border-box;
-        padding: 10px 0 30px 0;
+        padding: 30px 0 10px 0;
       }
       #header_button_wrapper {
         display: flex;
         justify-content: center;
       }
+
+      /* ========SLIDER STYLES======== */
       #slider_wrapper {
         height: 80px;
         width: 100vw;
@@ -76,81 +180,34 @@
         margin: 0 10px 0 25px;
         color: white;
       }
-      .mode_selector {
-        margin: 0 10px 0 10px;
-        font-size: 24px;
-        background-color: darkgrey;
-        border-radius: 25px;
-        width: 200px;
-        height: 40px;
-        outline: none;
-        border: 1px solid black;
-        font-size: 24px;
-        font-weight: bold;
-        cursor: pointer;
-      }
-      .mode_selector:hover {
-        box-shadow: black 2px 5px 10px;
-      }
-      .mode_selector.on {
-        background-color: var(--main-theme);
-        color: white;
-      }
-      #map_wrapper {
-        flex-grow: 1;
-        display: flex;
-        justify-content: center;
-      }
-      #legend_wrapper {
-        display: flex;
-        justify-content: center;
-        margin-top: 40px;
-      }
-      #screen_select {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-      }
-      #action_item {
-        font-size: 18px;
-        font-weight: bold;
-      }
-      #state_label {
-        color: white;
-        background-color: var(--main-theme);
-        box-sizing: border-box;
-        padding: 5px 10px 5px 10px;
-        border-radius: 25px;
-        margin: 0;
-        font-weight: bold;
-      }
     </style>
   </head>
   <body>
-    <div id="screen_select">
-      <div
+    <div id="screen_landing">
+      <h1>Expenditures and Achievement: An Exploration of US Education</h1>
+      <p
         style="
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          height: 100px;
+          color: lightgrey;
+          max-width: 950px;
+          margin-bottom: 20px;
+          text-align: center;
+          font-size: 18px;
         "
       >
-        <h3>2015 Educational Expenditures per Student</h3>
-        <p id="state_label" style="visibility: hidden">State: Dollars</p>
+        Socioeconomic factors, municipal budgets, and the efficiency of dollars
+        spent all contribute to a child's success. This page explores metrics
+        across states and helps paint a better picture of differences in
+        education across the nation.
+      </p>
+
+      <button id="enter_button">Enter</button>
+      <div style="position: fixed; bottom: 25px; right: 50px">
+        <p style="color: lightgrey">Adrian Lee, Faris Aziz, Reza Madhavan</p>
+        <p style="font-style: italic; color: lightgrey">awl68, fsa22, rm855</p>
       </div>
-      <div id="map_wrapper">
-        <svg id="main" style="background: #fff"></svg>
-      </div>
-      <div id="legend_wrapper">
-        <svg id="map_legend" height="50" width="500"></svg>
-        <p style="margin: 0; font-style: italic; font-size: 14px">
-          Thousands, $ USD
-        </p>
-      </div>
+    </div>
+    <div id="screen_select" style="display: none">
       <div id="header">
-        <p id="action_item">See more details by clicking on a state.</p>
         <div id="header_button_wrapper">
           <button id="switch_mode_single" class="mode_selector on">
             Single
@@ -159,6 +216,50 @@
             Comparison
           </button>
         </div>
+        <p id="action_item">See more details by clicking on a state.</p>
+      </div>
+      <div id="map_wrapper">
+        <div id="map_column" style="display: flex; flex-grow: 1">
+          <svg id="main"></svg>
+        </div>
+        <div id="state_label" style="visibility: hidden">
+          <p
+            style="
+              text-align: center;
+              font-weight: bold;
+              margin: 0 0 10px 0;
+              font-size: 24px;
+            "
+            id="state_label_name"
+          >
+            State
+          </p>
+          <div class="line_item">
+            <span>Expenditures per Student: </span>
+            <span id="state_label_expenditures"> $0.00 </span>
+          </div>
+          <div class="line_item">
+            <span>GDP per Capita: </span>
+            <span id="state_label_gdp">$0.00</span>
+          </div>
+          <div class="line_item">
+            <span>Average NAEP Test Score:</span>
+            <span id="state_label_scores">0.00%</span>
+          </div>
+        </div>
+      </div>
+      <div id="legend_wrapper">
+        <p
+          style="
+            margin: 0 0 10px 0;
+            font-style: italic;
+            font-weight: bold;
+            font-size: 14px;
+          "
+        >
+          Expenditures per student in thousands of USD (2015)
+        </p>
+        <svg id="map_legend" height="50" width="500"></svg>
       </div>
     </div>
 
@@ -193,35 +294,51 @@
     </div>
 
     <script>
-      let yearIndex = 0;
-      let selected = null;
-      let compSelected = [];
-      let isSingle = true;
-      let play = false;
-      let interval;
-      const animationDuration = 25;
-      const hoverOpacity = 0.5;
-      const selectScreenYear = 2015;
-
-      // SETUP SVGS
-      const mainSvg = d3.select('#main');
-      const aspectRatio = 2;
-      const mainHeight = parseInt(d3.select('#map_wrapper').style('height'));
-      const mainWidth = mainHeight * aspectRatio;
-      mainSvg.style('width', mainWidth);
-      mainSvg.style('height', mainHeight);
-      const mainMap = mainSvg.append('g');
-      const stateLabel = d3.select('#state_label');
-      const mapLegend = d3.select('#map_legend');
-
-      const playPauseButton = d3.select('#playPauseButton');
-      const switchToSingle = d3.select('#switch_mode_single');
-      const switchToComp = d3.select('#switch_mode_comp');
-      const singleBack = d3.select('#single_back');
-      const compBack = d3.select('#double_back');
-      const modeSwitchLabel = d3.select('#action_item');
+      const enterButton = d3.select('#enter_button');
 
       async function main() {
+        d3.select('#screen_landing').style('display', 'none');
+        d3.select('#screen_select').style('display', 'block');
+
+        let yearIndex = 0;
+        let selected = null;
+        let compSelected = [];
+        let isSingle = true;
+        let play = false;
+        let interval;
+        const animationDuration = 25;
+        const hoverOpacity = 0.5;
+        const selectScreenYear = 2015;
+
+        // SETUP SVGS AND RESPONSIVE LAYOUTS
+        const mainSvg = d3.select('#main');
+        let aspectRatio = 0.5;
+        let mainWidth = parseInt(d3.select('#map_column').style('width'));
+        let mainHeight = mainWidth * aspectRatio;
+        const leftOver =
+          window.innerHeight -
+          parseInt(d3.select('#header').style('height')) -
+          parseInt(d3.select('#legend_wrapper').style('height')) -
+          parseInt(d3.select('#legend_wrapper').style('margin-top'));
+
+        if (mainHeight > leftOver) {
+          aspectRatio = 2;
+          mainHeight = leftOver;
+          mainWidth = mainHeight * aspectRatio;
+        }
+        mainSvg.style('width', mainWidth);
+        mainSvg.style('height', mainHeight);
+        const mainMap = mainSvg.append('g');
+        const stateLabel = d3.select('#state_label');
+        const mapLegend = d3.select('#map_legend');
+
+        const playPauseButton = d3.select('#playPauseButton');
+        const switchToSingle = d3.select('#switch_mode_single');
+        const switchToComp = d3.select('#switch_mode_comp');
+        const singleBack = d3.select('#single_back');
+        const compBack = d3.select('#double_back');
+        const modeSwitchLabel = d3.select('#action_item');
+
         const [us, data] = await Promise.all([
           d3.json('data/states-10m.json'),
           d3.csv('data/final.csv'),
@@ -408,14 +525,18 @@
               .duration(animationDuration)
               .style('opacity', 1);
             const stateName = e.target.getAttribute('stateName');
-            stateLabel
-              .style('visibility', 'visible')
-              .text(
-                `${stateName}: $${(
-                  stateDict.getRecord(stateName, selectScreenYear)
-                    .EXPENDITURE_PER_STUDENT * 1000
-                ).toLocaleString(undefined, { maximumFractionDigits: 2 })}`
-              );
+            const record = stateDict.getRecord(stateName, selectScreenYear);
+            d3.select('#state_label_name').text(`${stateName}`);
+            d3.select('#state_label_expenditures').text(
+              `${floatToDollars(record.EXPENDITURE_PER_STUDENT * 1000)}`
+            );
+            d3.select('#state_label_gdp').text(`
+                ${floatToDollars(record.GDP_PER_CAPITA * 1000000)}
+            `);
+            d3.select('#state_label_scores').text(`
+               ${decimalToPercent(record.AVG_SCORE_PERCENTAGE)}
+            `);
+            stateLabel.style('visibility', 'visible');
           };
         }
 
@@ -450,13 +571,14 @@
         switchToComp.on('click', () => compView(years));
         singleBack.on('click', reset);
         compBack.on('click', reset);
+
         renderStates(2015, isSingle);
         drawLegend(mapLegend, colorScale);
 
         return;
       }
 
-      main();
+      enterButton.on('click', main);
     </script>
   </body>
 </html>
