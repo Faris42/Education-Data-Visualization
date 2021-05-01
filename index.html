@@ -98,6 +98,7 @@
         display: flex;
         flex-direction: column;
         height: 100vh;
+        background: linear-gradient(var(--main-bg), white);
       }
       #action_item {
         font-size: 18px;
@@ -138,7 +139,6 @@
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        background: var(--main-bg);
         color: white;
         box-sizing: border-box;
         padding: 30px 0 10px 0;
@@ -220,7 +220,7 @@
       </div>
       <div id="map_wrapper">
         <div id="map_column" style="display: flex; flex-grow: 1">
-          <svg id="main" style="background: #fff"></svg>
+          <svg id="main"></svg>
         </div>
         <div id="state_label" style="visibility: hidden">
           <p
