@@ -49,6 +49,11 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
 		let percent2 = value2 / (value1 + value2);
 
 		// Text formatting
+
+		if (text.includes("ENROLL")) {
+			text = "ENROLLMENT OF STUDENTS";
+		}
+
 		let text = v.replaceAll("_", " ");
 		text = text.toLowerCase();
 		text = capitalizeWords(text);
@@ -98,7 +103,7 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
 		if (v.includes("PERCENTAGE")) {
 			valueText1 = decimalToPercent(valueText1);
 			valueText2 = decimalToPercent(valueText2);
-		} else if (v.includes("ENROLL")) {
+		} else if (v.includes("ENROLL") || v.inclues("POPULATION")) {
 			valueText1 = numberWithCommas(valueText1);
 			valueText2 = numberWithCommas(valueText2);
 		} else {
@@ -139,6 +144,7 @@ function setupDouble() {
 		"ENROLL",
 		"EXPENDITURE_PER_STUDENT",
 		"INSTRUCTION_EXPENDITURE",
+		"POPULATION",
 		"GDP_PER_CAPITA",
 		"GDP",
 	];

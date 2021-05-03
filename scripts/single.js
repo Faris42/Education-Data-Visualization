@@ -396,51 +396,52 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 
 	const graphLegend = graphSvg
 		.append("g")
-		.attr(
-			"transform",
-			`translate(${margin.left},${chartHeight - margin.bottom} )`
-		);
+		.attr("transform", `translate(${margin.left},${chartHeight - 5} )`);
 
 	graphLegend
 		.append("rect")
 		.attr("width", 10)
 		.attr("height", 10)
-		.style("fill", "red");
+		.attr("x", 10)
+		.attr("y", 5)
+		.style("fill", "green");
 
 	graphLegend
 		.append("text")
-		.attr("x", 14)
-		.attr("y", 10)
-		.text("Instruction")
+		.attr("x", 24)
+		.attr("y", 15)
+		.text("Gdp per capita")
 		.style("fill", "white");
 
-	// graphLegend
-	// 	.append("rect")
-	// 	.attr("width", 10)
-	// 	.attr("height", 10)
-	// 	.attr("x", 100)
-	// 	.style("fill", "#274c6f");
+	graphLegend
+		.append("rect")
+		.attr("width", 10)
+		.attr("height", 10)
+		.attr("x", 100)
+		.attr("y", 22)
+		.style("fill", "yellow");
 
-	// graphLegend
-	// 	.append("text")
-	// 	.attr("x", 114)
-	// 	.attr("y", 10)
-	// 	.text("Capital Outlay")
-	// 	.style("fill", "white");
+	graphLegend
+		.append("text")
+		.attr("x", 114)
+		.attr("y", 32)
+		.text("Education expenditure")
+		.style("fill", "white");
 
-	// graphLegend
-	// 	.append("rect")
-	// 	.attr("width", 10)
-	// 	.attr("height", 10)
-	// 	.attr("x", 230)
-	// 	.style("fill", "#16b6eb");
+	graphLegend
+		.append("rect")
+		.attr("width", 10)
+		.attr("height", 10)
+		.attr("x", 186)
+		.attr("y", 5)
+		.style("fill", "#16b6eb");
 
-	// graphLegend
-	// 	.append("text")
-	// 	.attr("x", 244)
-	// 	.attr("y", 10)
-	// 	.text("Support Services")
-	// 	.style("fill", "white");
+	graphLegend
+		.append("text")
+		.attr("x", 200)
+		.attr("y", 15)
+		.text("Average Student Score")
+		.style("fill", "white");
 
 	// graphLegend
 	// 	.append("rect")
