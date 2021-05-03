@@ -1,8 +1,18 @@
+/**
+ * Function to render the entire page for the single state view. Renders
+ * mosaic at top, graph, state info box, and all labels/text
+ * @param {StateDict} sd - object that contains all state/year information
+ * @param {string} stateName - name of state being viewed
+ * @param {list} yrs - a list of all the years we have data for
+ * @param {number} activeYear - the active year on the slider
+ * @returns
+ */
 function renderSingle(sd, stateName, yrs, activeYear) {
 	const records = sd.getRecords(stateName);
-
 	const currRecord = records.years[activeYear];
 
+	// fill in the labels in the info box with info from record, use helper
+	// functions to format numbers accordingly
 	d3.select("#single_gdp").text(
 		floatToDollars(currRecord.GDP_PER_CAPITA * 1000000)
 	);
@@ -15,8 +25,6 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 	d3.select("#single_pop").text(numberWithCommas(currRecord.POPULATION));
 	d3.select("#single_enroll").text(numberWithCommas(currRecord.ENROLL));
 
-	// for mosaic at top
-
 	other_costs =
 		currRecord.OTHER_EXPENDITURE +
 		(currRecord.TOTAL_EXPENDITURE -
@@ -25,21 +33,23 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 				currRecord.OTHER_EXPENDITURE +
 				currRecord.SUPPORT_SERVICES_EXPENDITURE));
 
-	console.log(other_costs);
-
 	const barSvg = d3.select("svg#singleBarSvg");
 	const graphSvg = d3.select("svg#singleGraphSvg");
 
+	// clear any existing elements
 	barSvg.selectAll("*").remove();
 	graphSvg.selectAll("*").remove();
 
-	var width = barSvg.attr("width");
-	var height = barSvg.attr("height");
+	// ====================BAR SVG==========================
 
-	var margin = { top: 0, right: 0, bottom: 0, left: 0 };
-	var chartWidth = width - margin.left - margin.right;
-	var chartHeight = height - margin.top - margin.bottom;
+	let width = barSvg.attr("width");
+	let height = barSvg.attr("height");
 
+	let margin = { top: 0, right: 0, bottom: 0, left: 0 };
+	let chartWidth = width - margin.left - margin.right;
+	let chartHeight = height - margin.top - margin.bottom;
+
+	// Renders all rectangles for mosaic at top
 	const percentScale = d3
 		.scaleLinear()
 		.domain([0, currRecord.TOTAL_EXPENDITURE])
@@ -48,11 +58,6 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 	const mosaic = barSvg
 		.append("g")
 		.attr("transform", `translate(${margin.left},${margin.top})`);
-
-	// mosaic
-	// 	.append("text")
-	// 	.attr("x", chartWidth / 2 - 100)
-	// 	.text("Education Expenditure Breakdown");
 
 	mosaic
 		.append("rect")
@@ -95,6 +100,7 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 		.attr("height", 50)
 		.attr("fill", "#2979a3");
 
+	// renders percentage labels for the mosaic
 	const percentages = barSvg
 		.append("g")
 		.attr("transform", `translate(0,${margin.top + 75} )`);
@@ -150,7 +156,8 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 		.attr("text-anchor", "middle")
 		.text(decimalToPercent(other_costs / currRecord.TOTAL_EXPENDITURE))
 		.style("fill", "white");
-	// make legend
+
+	// renders legend for mosaic
 	const legend = barSvg
 		.append("g")
 		.attr("transform", `translate(${margin.left + 50},${margin.top + 85} )`);
@@ -209,7 +216,8 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 		.attr("y", 10)
 		.text("Other")
 		.style("fill", "white");
-	// for graph
+
+	// ====================GRAPH SVG==========================
 
 	width = graphSvg.attr("width");
 	height = graphSvg.attr("height");
@@ -278,6 +286,7 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 		.attr("y", margin.left + 3)
 		.attr("transform", "rotate(-90)")
 		.style("text-anchor", "middle")
+		.style("fill", "white")
 		.text("Dollars (thousands)");
 
 	let rightAxis = d3
@@ -299,6 +308,7 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 		.attr("y", -chartWidth - margin.left + 5)
 		.attr("transform", "rotate(90)")
 		.style("text-anchor", "middle")
+		.style("fill", "white")
 		.text("Avg. Score");
 
 	let bottomAxis = d3.axisBottom(yearScale).tickFormat(d3.format(""));
@@ -375,9 +385,6 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 		.attr("x2", yearScale(activeYear))
 		.attr("y1", chartHeight - 5)
 		.attr("y2", 100);
-
-	// gdp is in millions
-	// expenditure is in thousands
 
 	return;
 }
