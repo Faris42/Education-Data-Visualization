@@ -5,7 +5,7 @@
  * @returns {string}
  */
 function floatToDollars(num) {
-  return '$' + num.toLocaleString(undefined, { maximumFractionDigits: 2 });
+	return "$" + num.toLocaleString(undefined, { maximumFractionDigits: 2 });
 }
 
 /**
@@ -15,5 +15,15 @@ function floatToDollars(num) {
  * @returns {string}
  */
 function decimalToPercent(num) {
-  return (num * 100).toFixed(2) + '%';
+	return (num * 100).toFixed(2) + "%";
+}
+
+/**
+ * Returns a string representation of a number with commas seperating every 3 digits.
+ * Source: https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
+ * @param {number} num
+ * @returns {string}
+ */
+function numberWithCommas(num) {
+	return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }

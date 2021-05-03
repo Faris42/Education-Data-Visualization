@@ -10,16 +10,16 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 	console.log(currRecord);
 
 	d3.select("#single_gdp").text(
-		floatToDollars(currRecord.GDP_PER_CAPITA * 1000)
+		floatToDollars(currRecord.GDP_PER_CAPITA * 1000000)
 	);
 	d3.select("#single_scores").text(
 		decimalToPercent(currRecord.AVG_SCORE_PERCENTAGE)
 	);
 	d3.select("#single_expenditures").text(
-		floatToDollars(currRecord.TOTAL_EXPENDITURE)
+		floatToDollars(currRecord.EXPENDITURE_PER_STUDENT * 1000)
 	);
-	d3.select("#single_pop").text(currRecord.POPULATION);
-	d3.select("#single_enroll").text(currRecord.ENROLL);
+	d3.select("#single_pop").text(numberWithCommas(currRecord.POPULATION));
+	d3.select("#single_enroll").text(numberWithCommas(currRecord.ENROLL));
 
 	// for mosaic at top
 
@@ -100,7 +100,64 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 		.attr("fill", "#2979a3");
 
 	// make legend
+	const legend = barSvg
+		.append("g")
+		.attr("transform", `translate(${margin.left + 50},${margin.top + 60} )`);
 
+	legend
+		.append("rect")
+		.attr("width", 10)
+		.attr("height", 10)
+		.style("fill", "#202c49");
+
+	legend
+		.append("text")
+		.attr("x", 14)
+		.attr("y", 10)
+		.text("Instruction")
+		.style("fill", "white");
+
+	legend
+		.append("rect")
+		.attr("width", 10)
+		.attr("height", 10)
+		.attr("x", 100)
+		.style("fill", "#274c6f");
+
+	legend
+		.append("text")
+		.attr("x", 114)
+		.attr("y", 10)
+		.text("Capital Outlay")
+		.style("fill", "white");
+
+	legend
+		.append("rect")
+		.attr("width", 10)
+		.attr("height", 10)
+		.attr("x", 230)
+		.style("fill", "#16b6eb");
+
+	legend
+		.append("text")
+		.attr("x", 244)
+		.attr("y", 10)
+		.text("Support Services")
+		.style("fill", "white");
+
+	legend
+		.append("rect")
+		.attr("width", 10)
+		.attr("height", 10)
+		.attr("x", 380)
+		.style("fill", "#2979a3");
+
+	legend
+		.append("text")
+		.attr("x", 394)
+		.attr("y", 10)
+		.text("Other")
+		.style("fill", "white");
 	// for graph
 
 	width = graphSvg.attr("width");
