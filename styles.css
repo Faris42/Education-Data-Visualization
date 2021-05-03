@@ -226,3 +226,30 @@ body {
   max-height: 200px;
   margin-top: 200px;
 }
+
+/* DOUBLE SCREEN STYLES */
+#double_header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.marker_square {
+  width: 30px;
+  height: 30px;
+  margin-left: 25px;
+  margin-right: 25px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+#double_title {
+  color: white;
+}
+
+#screen_double {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(var(--main-bg), white);
+}

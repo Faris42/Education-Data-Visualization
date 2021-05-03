@@ -139,14 +139,13 @@
       <button id="single_back">Back</button>
     </div>
 
-    <div style="display: none" id="screen_double">
-      <p id="double_title">States:</p>
-      <svg
-        id="doubleSvg"
-        height="800"
-        width="800"
-        style="background: #fff; margin-top: 50px"
-      ></svg>
+    <div id="screen_double">
+      <div id="double_header">
+        <div style="background-color: #16b6eb" class="marker_square"></div>
+        <h2 id="double_title">Comparing State1 and State2</h2>
+        <div style="background-color: #202c49" class="marker_square"></div>
+      </div>
+      <svg id="doubleSvg" height="800" width="800"></svg>
       <button id="double_back">Back</button>
     </div>
 
@@ -300,10 +299,8 @@
             compSelected.push(selected);
             d3.select('#screen_select').style('display', 'none');
             d3.select('#slider_wrapper').style('display', 'flex');
-            d3.select('#screen_double').style('display', 'block');
-            d3.select('#double_title').text(
-              'Selected: ' + compSelected.join(', ')
-            );
+            d3.select('#screen_double').style('display', 'flex');
+            d3.select('#double_title').text(compSelected.join(' vs. '));
             const activeYear = years[yearIndex];
             renderDouble(stateDict, compSelected, years, activeYear);
           } else {

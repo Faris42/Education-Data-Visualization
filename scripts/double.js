@@ -58,7 +58,7 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
       .attr('x', 0)
       .attr('y', yCounter)
       .attr('width', percentScale(percent1))
-      .attr('height', 50)
+      .attr('height', 30)
       .attr('fill', '#16b6eb');
 
     chartArea
@@ -66,8 +66,8 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
       .attr('x', percentScale(percent1))
       .attr('y', yCounter)
       .attr('width', percentScale(percent2))
-      .attr('height', 50)
-      .attr('fill', '#2979a3');
+      .attr('height', 30)
+      .attr('fill', '#202c49');
 
     chartArea
       .append('line')
