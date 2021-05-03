@@ -143,7 +143,7 @@ function setupDouble() {
   percentScale = d3.scaleLinear().domain([0, 1]).range([0, chartWidth]);
 }
 
-function capitalize_Words(str) {
+function capitalizeWords(str) {
   return str.replace(/\w\S*/g, function (txt) {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
   });
