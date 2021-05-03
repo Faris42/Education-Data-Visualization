@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="03c0def6-c9e0-4758-8a61-03212c2d4157" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/scripts/double.js" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/double.js" afterDir="false" />
-    </list>
+    <list default="true" id="03c0def6-c9e0-4758-8a61-03212c2d4157" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
