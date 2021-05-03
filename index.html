@@ -7,180 +7,7 @@
     <script src="scripts/single.js"></script>
     <script src="scripts/double.js"></script>
     <script src="scripts/from_class.js"></script>
-
-    <style>
-      /* ========GLOBAL STYLES======== */
-      :root {
-        --main-theme: #2a87b7;
-        --main-bg: rgb(58, 58, 58);
-      }
-      body {
-        margin: 0;
-      }
-      * {
-        font-family: Arial;
-      }
-
-      /* ========LANDING STYLES======== */
-      #screen_landing {
-        width: 100vw;
-        height: 100vh;
-        /* background: linear-gradient(var(--main-theme), var(--main-bg)); */
-        background: linear-gradient(rgb(135, 135, 135), var(--main-theme));
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-      }
-      #screen_landing * {
-        color: white;
-      }
-      #screen_landing p {
-        margin: 2px 0 2px 0;
-        font-size: 14px;
-      }
-
-      #enter_button {
-        margin: 30px 10px 0 10px;
-        font-size: 24px;
-        background-color: var(--main-theme);
-        color: white;
-        border-radius: 25px;
-        width: 200px;
-        height: 40px;
-        outline: none;
-        border: 1px solid black;
-        font-size: 24px;
-        font-weight: bold;
-        cursor: pointer;
-      }
-      #enter_button:hover {
-        box-shadow: black 2px 2px 10px;
-      }
-
-      /* ========SELECT SCREEN STYLES======== */
-      .mode_selector {
-        margin: 0 10px 0 10px;
-        font-size: 24px;
-        background-color: darkgrey;
-        border-radius: 25px;
-        width: 200px;
-        height: 40px;
-        outline: none;
-        border: 1px solid black;
-        font-size: 24px;
-        font-weight: bold;
-        cursor: pointer;
-      }
-      .mode_selector:hover {
-        box-shadow: black 2px 5px 10px;
-      }
-      .mode_selector.on {
-        background-color: var(--main-theme);
-        color: white;
-      }
-      #map_wrapper {
-        flex-grow: 1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      #legend_wrapper {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        margin-top: 40px;
-        height: 80px;
-      }
-      #screen_select {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        background: linear-gradient(var(--main-bg), white);
-      }
-      #action_item {
-        font-size: 18px;
-        font-weight: bold;
-      }
-      #state_label {
-        color: white;
-        background-color: var(--main-theme);
-        box-sizing: border-box;
-        padding: 20px 20px 20px 20px;
-        border-radius: 25px;
-        margin: 0 50px 0 0;
-        display: flex;
-        flex-direction: column;
-        min-width: 320px;
-        box-shadow: grey 5px 5px 10px;
-      }
-      .line_item {
-        width: 100%;
-        margin: 2px 0 2px 0;
-        display: flex;
-        justify-content: space-between;
-      }
-      .state {
-        stroke: black;
-        cursor: pointer;
-      }
-      .nation {
-        fill: #ddd;
-      }
-      .outline {
-        stroke: black;
-        stroke-width: 3px;
-        fill: none;
-      }
-      #header {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        color: white;
-        box-sizing: border-box;
-        padding: 30px 0 10px 0;
-      }
-      #header_button_wrapper {
-        display: flex;
-        justify-content: center;
-      }
-
-      /* ========SLIDER STYLES======== */
-      #slider_wrapper {
-        height: 80px;
-        width: 100vw;
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        background-color: var(--main-bg);
-        align-items: center;
-        box-sizing: border-box;
-        padding: 0 25px 0 25px;
-      }
-      #playPauseButton {
-        background-color: white;
-        border-radius: 25px;
-        width: 150px;
-        height: 40px;
-        outline: none;
-        font-size: 24px;
-        font-weight: bold;
-        cursor: pointer;
-      }
-      #playPauseButton:hover {
-        background-color: rgb(227, 227, 227);
-      }
-      #slider_title {
-        font-size: 24px;
-        font-weight: bold;
-        margin: 0 10px 0 25px;
-        color: white;
-      }
-    </style>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div id="screen_landing">
@@ -291,6 +118,7 @@
     <div style="display: none" id="slider_wrapper">
       <button id="playPauseButton">Play</button>
       <p id="slider_title">2003</p>
+      <input id="date_slider" type="range" value="0" min="0" step="1" />
     </div>
 
     <script>
@@ -338,6 +166,7 @@
         const singleBack = d3.select('#single_back');
         const compBack = d3.select('#double_back');
         const modeSwitchLabel = d3.select('#action_item');
+        const dateSlider = d3.select('#date_slider');
 
         const [us, data] = await Promise.all([
           d3.json('data/states-10m.json'),
@@ -377,6 +206,8 @@
           .datum(statesMesh)
           .attr('class', 'outline')
           .attr('d', path);
+
+        dateSlider.attr('max', years.length === 0 ? 0 : years.length - 1);
 
         function renderStates(year, isSingle) {
           mainMap
@@ -469,12 +300,27 @@
           if (yearIndex === all_years.length) yearIndex = 0;
           const new_year = all_years[yearIndex];
           d3.select('#slider_title').text(new_year);
+          dateSlider.attr('value', yearIndex);
           if (selected === null && compSelected.length === 0) {
             renderStates(2015, isSingle);
           } else if (isSingle) {
-            renderSingle(stateDict, selected, years, new_year);
+            renderSingle(stateDict, selected, all_years, new_year);
           } else {
-            renderDouble(stateDict, compSelected, years, new_year);
+            renderDouble(stateDict, compSelected, all_years, new_year);
+          }
+        }
+
+        function setYear(all_years, newIndex) {
+          yearIndex = newIndex;
+          const new_year = all_years[yearIndex];
+          d3.select('#slider_title').text(new_year);
+          dateSlider.attr('value', yearIndex);
+          if (selected === null && compSelected.length === 0) {
+            renderStates(2015, isSingle);
+          } else if (isSingle) {
+            renderSingle(stateDict, selected, all_years, new_year);
+          } else {
+            renderDouble(stateDict, compSelected, all_years, new_year);
           }
         }
 
@@ -566,11 +412,21 @@
           };
         }
 
+        function onChangeSlider(all_years) {
+          return function (e) {
+            if (play) {
+              playOrPause(all_years);
+            }
+            setYear(all_years, e.target.value);
+          };
+        }
+
         playPauseButton.on('click', () => playOrPause(years));
         switchToSingle.on('click', () => singleView(years));
         switchToComp.on('click', () => compView(years));
         singleBack.on('click', reset);
         compBack.on('click', reset);
+        dateSlider.on('input', onChangeSlider(years));
 
         renderStates(2015, isSingle);
         drawLegend(mapLegend, colorScale);
