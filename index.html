@@ -600,7 +600,7 @@
         switchToComp.on('click', () => compView(years));
         singleBack.on('click', reset);
         compBack.on('click', reset);
-        dateSlider.on('change', onChangeSlider(years));
+        dateSlider.on('input', onChangeSlider(years));
 
         renderStates(2015, isSingle);
         drawLegend(mapLegend, colorScale);
