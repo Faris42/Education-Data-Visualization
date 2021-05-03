@@ -102,7 +102,7 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
 		if (v.includes("PERCENTAGE")) {
 			valueText1 = decimalToPercent(valueText1);
 			valueText2 = decimalToPercent(valueText2);
-		} else if (v.includes("ENROLL") || v.inclues("POPULATION")) {
+		} else if (v.includes("ENROLL") || v.includes("POPULATION")) {
 			valueText1 = numberWithCommas(valueText1);
 			valueText2 = numberWithCommas(valueText2);
 		} else {
