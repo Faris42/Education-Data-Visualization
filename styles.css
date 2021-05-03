@@ -177,3 +177,17 @@ body {
   height: 100vh;
   background: linear-gradient(var(--main-bg), white);
 }
+
+#single_label {
+  color: white;
+  background-color: var(--main-theme);
+  box-sizing: border-box;
+  padding: 20px 20px 20px 20px;
+  border-radius: 25px;
+  display: flex;
+  flex-direction: column;
+  min-width: 320px;
+  box-shadow: grey 5px 5px 10px;
+  max-height: 200px;
+  margin-top: 200px;
+}
