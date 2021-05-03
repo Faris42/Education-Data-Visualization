@@ -98,6 +98,9 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
 		if (v.includes("PERCENTAGE")) {
 			valueText1 = decimalToPercent(valueText1);
 			valueText2 = decimalToPercent(valueText2);
+		} else if (v.includes("ENROLL")) {
+			valueText1 = numberWithCommas(valueText1);
+			valueText2 = numberWithCommas(valueText2);
 		} else {
 			valueText1 = floatToDollars(valueText1);
 			valueText2 = floatToDollars(valueText2);
@@ -133,6 +136,7 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
 function setupDouble() {
 	values = [
 		"AVG_SCORE_PERCENTAGE",
+		"ENROLL",
 		"EXPENDITURE_PER_STUDENT",
 		"INSTRUCTION_EXPENDITURE",
 		"GDP_PER_CAPITA",

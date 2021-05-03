@@ -329,7 +329,7 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 		.append("path")
 		.datum(yrs)
 		.attr("fill", "none")
-		.attr("stroke", "steelblue")
+		.attr("stroke", "yellow")
 		.attr("stroke-width", 3)
 		.attr(
 			"d",
@@ -393,6 +393,68 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 		.attr("x2", yearScale(activeYear))
 		.attr("y1", chartHeight - margin.bottom)
 		.attr("y2", 15);
+
+	const graphLegend = graphSvg
+		.append("g")
+		.attr(
+			"transform",
+			`translate(${margin.left},${chartHeight - margin.bottom} )`
+		);
+
+	graphLegend
+		.append("rect")
+		.attr("width", 10)
+		.attr("height", 10)
+		.style("fill", "red");
+
+	graphLegend
+		.append("text")
+		.attr("x", 14)
+		.attr("y", 10)
+		.text("Instruction")
+		.style("fill", "white");
+
+	// graphLegend
+	// 	.append("rect")
+	// 	.attr("width", 10)
+	// 	.attr("height", 10)
+	// 	.attr("x", 100)
+	// 	.style("fill", "#274c6f");
+
+	// graphLegend
+	// 	.append("text")
+	// 	.attr("x", 114)
+	// 	.attr("y", 10)
+	// 	.text("Capital Outlay")
+	// 	.style("fill", "white");
+
+	// graphLegend
+	// 	.append("rect")
+	// 	.attr("width", 10)
+	// 	.attr("height", 10)
+	// 	.attr("x", 230)
+	// 	.style("fill", "#16b6eb");
+
+	// graphLegend
+	// 	.append("text")
+	// 	.attr("x", 244)
+	// 	.attr("y", 10)
+	// 	.text("Support Services")
+	// 	.style("fill", "white");
+
+	// graphLegend
+	// 	.append("rect")
+	// 	.attr("width", 10)
+	// 	.attr("height", 10)
+	// 	.attr("x", 380)
+	// 	.style("fill", "#2979a3");
+
+	// graphLegend
+	// 	.append("text")
+	// 	.attr("x", 394)
+	// 	.attr("y", 10)
+	// 	.text("Other")
+	// 	.style("fill", "white");
 
 	return;
 }
