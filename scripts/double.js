@@ -23,6 +23,7 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
 
   const state1 = sd.getRecord(stateNames[0], activeYear);
   const state2 = sd.getRecord(stateNames[1], activeYear);
+  const labelMargin = 10;
 
   let yCounter = 30;
   values.forEach(function (v) {
@@ -49,8 +50,7 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
       .attr('y', yCounter - 25)
       .attr('text-anchor', 'start')
       .attr('dominant-baseline', 'hanging')
-      .style('font', '14px Arial')
-      .style('font-weight', 'bold')
+      .attr('class', 'comparison_header')
       .text(text);
 
     chartArea
@@ -91,23 +91,25 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
 
     chartArea
       .append('text')
-      .attr('x', percentScale(percent1) - 5)
-      .attr('y', yCounter + 60)
-      .attr('text-anchor', 'end')
+      // .attr('x', percentScale(percent1) - 5)
+      .attr('x', 5)
+      .attr('y', yCounter + labelMargin)
+      .attr('text-anchor', 'start')
       .attr('dominant-baseline', 'hanging')
-      .style('font', '14px Arial')
+      .attr('class', 'valueText')
       .text(valueText1);
 
     chartArea
       .append('text')
-      .attr('x', percentScale(percent1) + 5)
-      .attr('y', yCounter + 60)
-      .attr('text-anchor', 'start')
+      // .attr('x', percentScale(percent1) + 5)
+      .attr('x', chartWidth - 5)
+      .attr('y', yCounter + labelMargin)
+      .attr('text-anchor', 'end')
       .attr('dominant-baseline', 'hanging')
-      .style('font', '14px Arial')
+      .attr('class', 'valueText')
       .text(valueText2);
 
-    yCounter += 150;
+    yCounter += 100;
   });
   return;
 }

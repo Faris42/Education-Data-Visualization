@@ -1,10 +1,13 @@
 /* ========GLOBAL STYLES======== */
 :root {
   --main-theme: #2a87b7;
-  --main-bg: rgb(58, 58, 58);
+  --slider-bg: rgb(58, 58, 58);
+  --bg: rgb(23, 23, 23);
 }
 body {
   margin: 0;
+  background: rgb(23, 23, 23);
+  color: white;
 }
 * {
   font-family: Arial;
@@ -14,9 +17,8 @@ body {
 #screen_landing {
   width: 100vw;
   height: 100vh;
-  /* background: linear-gradient(var(--main-theme), var(--main-bg)); */
-  background: linear-gradient(rgb(135, 135, 135), var(--main-theme));
-
+  /* background: linear-gradient(var(--main-theme), var(--slider-bg)); */
+  background: linear-gradient(var(--bg), var(--main-theme));
   display: flex;
   justify-content: center;
   align-items: center;
@@ -39,7 +41,7 @@ body {
   width: 200px;
   height: 40px;
   outline: none;
-  border: 1px solid black;
+  border: 1px solid white;
   font-size: 24px;
   font-weight: bold;
   cursor: pointer;
@@ -57,7 +59,7 @@ body {
   width: 200px;
   height: 40px;
   outline: none;
-  border: 1px solid black;
+  border: 1px solid white;
   font-size: 24px;
   font-weight: bold;
   cursor: pointer;
@@ -87,7 +89,6 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: linear-gradient(var(--main-bg), white);
 }
 #action_item {
   font-size: 18px;
@@ -103,7 +104,7 @@ body {
   display: flex;
   flex-direction: column;
   min-width: 320px;
-  box-shadow: grey 5px 5px 10px;
+  box-shadow: black 5px 5px 10px;
 }
 .line_item {
   width: 100%;
@@ -112,15 +113,15 @@ body {
   justify-content: space-between;
 }
 .state {
-  stroke: black;
+  stroke: white;
   cursor: pointer;
 }
 .nation {
   fill: #ddd;
 }
 .outline {
-  stroke: black;
-  stroke-width: 3px;
+  stroke: white;
+  stroke-width: 2px;
   fill: none;
 }
 #header {
@@ -145,10 +146,10 @@ body {
   position: fixed;
   bottom: 0;
   left: 0;
-  background-color: var(--main-bg);
+  background-color: var(--slider-bg);
   align-items: center;
   box-sizing: border-box;
-  padding: 0 25px 0 25px;
+  padding: 0 50px 0 50px;
 }
 
 #playPauseButton {
@@ -210,7 +211,6 @@ body {
   display: none;
   flex-direction: column;
   height: 100vh;
-  background: linear-gradient(var(--main-bg), white);
 }
 
 #single_label {
@@ -222,7 +222,7 @@ body {
   display: flex;
   flex-direction: column;
   min-width: 320px;
-  box-shadow: grey 5px 5px 10px;
+  box-shadow: black 5px 5px 10px;
   max-height: 200px;
   margin-top: 200px;
 }
@@ -251,5 +251,34 @@ body {
   display: none;
   flex-direction: column;
   align-items: center;
-  background: linear-gradient(var(--main-bg), white);
+}
+
+.valueText {
+  fill: white;
+  font-size: 14px;
+}
+
+.comparison_header {
+  fill: white;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.back_button {
+  font-size: 14px;
+  background-color: darkgrey;
+  border-radius: 25px;
+  width: 80px;
+  height: 30px;
+  outline: none;
+  border: 1px solid white;
+  font-weight: bold;
+  cursor: pointer;
+  position: fixed;
+  left: 25px;
+  top: 20px;
+}
+
+.back_button:hover {
+  box-shadow: black 2px 5px 10px;
 }
