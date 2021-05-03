@@ -46,6 +46,7 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 	let height = barSvg.attr("height");
 
 	let margin = { top: 0, right: 0, bottom: 0, left: 0 };
+	let strokeWidth = 3;
 	let chartWidth = width - margin.left - margin.right;
 	let chartHeight = height - margin.top - margin.bottom;
 
@@ -222,7 +223,7 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 	width = graphSvg.attr("width");
 	height = graphSvg.attr("height");
 
-	margin = { top: 15, right: 15, bottom: 15, left: 15 };
+	margin = { top: 0, right: 15, bottom: 30, left: 15 };
 	chartWidth = width - margin.left - margin.right;
 	chartHeight = height - margin.top - margin.bottom;
 
@@ -230,14 +231,14 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 		.append("g")
 		.attr("transform", "translate(" + margin.left + ",0)");
 
-	graphSvg
-		.append("text")
-		.attr("x", 110)
-		.attr("y", 80)
-		.text("GDP per Capita vs. Expenditure per Student vs Average Student Score")
-		.style("fill", "white")
-		.attr("font-weight", "bold")
-		.attr("font-size", "18px");
+	// graphSvg
+	// 	.append("text")
+	// 	.attr("x", 0)
+	// 	.attr("y", 80)
+	// 	.text("GDP per Capita vs. Expenditure per Student vs Average Student Score")
+	// 	.style("fill", "white")
+	// 	.attr("font-weight", "bold")
+	// 	.attr("font-size", "14px");
 
 	const expendExtent = d3.extent(
 		yrs,
@@ -260,19 +261,19 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 			Math.min(expendExtent[0], gdpExtent[0]),
 			Math.max(expendExtent[1], gdpExtent[1]),
 		])
-		.range([chartHeight - margin.bottom, 100]);
+		.range([chartHeight - margin.bottom, 15]);
 
 	const scoreScale = d3
 		.scaleLinear()
 		.domain(scoreExtent)
-		.range([chartHeight - margin.bottom, 100]);
+		.range([chartHeight - margin.bottom, 15]);
 
 	const yearScale = d3
 		.scaleLinear()
 		.domain([2003, 2015])
 		.range([margin.right + 30, chartWidth - margin.right - 50]);
 
-	let leftAxis = d3.axisLeft(moneyScale).tickFormat(d3.format("$,"));
+	let leftAxis = d3.axisLeft(moneyScale).tickFormat(d3.format("$,")).ticks(6);
 	graph
 		.append("g")
 		.lower()
@@ -291,7 +292,8 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 
 	let rightAxis = d3
 		.axisRight(scoreScale)
-		.tickFormat((d) => decimalToPercent(d));
+		.tickFormat((d) => decimalToPercent(d))
+		.ticks(5);
 	graphSvg
 		.append("g")
 		.lower()
@@ -300,6 +302,7 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 			"transform",
 			"translate(" + (chartWidth - margin.right - 30) + "," + 0 + ")"
 		)
+		.style("color", "#16b6eb")
 		.call(rightAxis);
 
 	graphSvg
@@ -311,12 +314,15 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 		.style("fill", "white")
 		.text("Avg. Score");
 
-	let bottomAxis = d3.axisBottom(yearScale).tickFormat(d3.format(""));
+	let bottomAxis = d3.axisBottom(yearScale).tickFormat(d3.format("")).ticks(7);
 	graph
 		.append("g")
 		.lower()
 		.attr("class", "x axis")
-		.attr("transform", "translate(" + 0 + "," + chartHeight + ")")
+		.attr(
+			"transform",
+			"translate(" + 0 + "," + (chartHeight - margin.bottom + 5) + ")"
+		)
 		.call(bottomAxis);
 
 	graph
@@ -324,7 +330,7 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 		.datum(yrs)
 		.attr("fill", "none")
 		.attr("stroke", "steelblue")
-		.attr("stroke-width", 1.5)
+		.attr("stroke-width", 3)
 		.attr(
 			"d",
 			d3
@@ -342,7 +348,7 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 		.datum(yrs)
 		.attr("fill", "none")
 		.attr("stroke", "green")
-		.attr("stroke-width", 1.5)
+		.attr("stroke-width", 3)
 		.attr(
 			"d",
 			d3
@@ -359,8 +365,8 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 		.append("path")
 		.datum(yrs)
 		.attr("fill", "none")
-		.attr("stroke", "black")
-		.attr("stroke-width", 1.5)
+		.attr("stroke", "#16b6eb")
+		.attr("stroke-width", 3)
 		.attr(
 			"d",
 			d3
@@ -378,13 +384,15 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 	graph
 		.append("line")
 		.attr("fill", "none")
+		.attr("class", "line")
 		.attr("stroke", "red")
 		.attr("stroke-width", 1.5)
+		.style("stroke-dasharray", "6, 3")
 		.attr("id", "timeMarker")
 		.attr("x1", yearScale(activeYear))
 		.attr("x2", yearScale(activeYear))
-		.attr("y1", chartHeight - 5)
-		.attr("y2", 100);
+		.attr("y1", chartHeight - margin.bottom)
+		.attr("y2", 15);
 
 	return;
 }
