@@ -90,17 +90,52 @@
       </div>
     </div>
 
-    <div
-      style="
-        display: none;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      "
-      id="screen_single"
-    >
-      <p id="single_title">State:</p>
-      <svg id="singleSvg" height="600" width="800"></svg>
+    <div style="align-items: center" id="screen_single">
+      <p style="color: white; font-weight: bold; font-size: 18px">
+        Education Expenditure Breakdown
+      </p>
+      <svg
+        id="singleBarSvg"
+        height="50"
+        width="600"
+        style="margin-bottom: 20px"
+      ></svg>
+      <div style="display: flex">
+        <svg id="singleGraphSvg" height="600" width="800"></svg>
+        <div id="single_label">
+          <p
+            id="single_name"
+            style="
+              text-align: center;
+              font-weight: bold;
+              margin: 0 0 10px 0;
+              font-size: 24px;
+            "
+          >
+            State
+          </p>
+          <div class="line_item">
+            <span>Expenditures per Student: </span>
+            <span id="single_expenditures"> $0.00 </span>
+          </div>
+          <div class="line_item">
+            <span>GDP per Capita: </span>
+            <span id="single_gdp">$0.00</span>
+          </div>
+          <div class="line_item">
+            <span>Average NAEP Test Score:</span>
+            <span id="single_scores">0.00%</span>
+          </div>
+          <div class="line_item">
+            <span>Total Population: </span>
+            <span id="single_pop">0</span>
+          </div>
+          <div class="line_item">
+            <span>Student Enrollment: </span>
+            <span id="single_enroll">0</span>
+          </div>
+        </div>
+      </div>
       <button id="single_back">Back</button>
     </div>
 
@@ -232,7 +267,7 @@
           d3.select('#screen_single').style('display', 'none');
           d3.select('#screen_double').style('display', 'none');
           d3.select('#slider_wrapper').style('display', 'none');
-          d3.select('#single_title').text('');
+          // d3.select("#single").text("");
         }
 
         function selectState(e) {
@@ -240,7 +275,7 @@
           d3.select('#screen_select').style('display', 'none');
           d3.select('#slider_wrapper').style('display', 'flex');
           d3.select('#screen_single').style('display', 'flex');
-          d3.select('#single_title').text(selected);
+          d3.select('#single_name').text(selected);
           const activeYear = years[yearIndex];
           renderSingle(stateDict, selected, years, activeYear);
         }
