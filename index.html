@@ -146,8 +146,7 @@
         height="800"
         width="800"
         style="background: #fff; margin-top: 50px"
-      >
-      </svg>
+      ></svg>
       <button id="double_back">Back</button>
     </div>
 
@@ -162,7 +161,7 @@
 
       async function main() {
         d3.select('#screen_landing').style('display', 'none');
-        d3.select('#screen_select').style('display', 'block');
+        d3.select('#screen_select').style('display', 'flex');
 
         let yearIndex = 0;
         let selected = null;
@@ -380,7 +379,7 @@
           switchToComp.attr('class', 'mode_selector');
           modeSwitchLabel.text('See more details by clicking on a state.');
         }
-        
+
         function compView(all_years) {
           reset();
           isSingle = false;
