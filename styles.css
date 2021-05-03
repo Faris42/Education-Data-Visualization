@@ -183,6 +183,7 @@ body {
   -webkit-transition: 0.2s;
   transition: opacity 0.2s;
   border-radius: 25px;
+  cursor: pointer;
 }
 
 /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
@@ -193,7 +194,7 @@ body {
   height: 25px;
   background: var(--main-theme);
   border-radius: 50%;
-  cursor: pointer;
+  cursor: grab;
 }
 
 #date_slider::-moz-range-thumb {
@@ -201,7 +202,7 @@ body {
   height: 25px;
   background: var(--main-theme);
   border-radius: 50%;
-  cursor: pointer;
+  cursor: grab;
 }
 
 /* SINGLE SCREEN STYLES */
