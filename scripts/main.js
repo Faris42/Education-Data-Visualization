@@ -311,15 +311,17 @@ async function main() {
             return !compSelected.includes(name);
           })
         : d3.selectAll('path.state');
-      // Make states on hover opacity.
+      // Make all other states on hover opacity.
       toChange
         .transition()
         .duration(animationDuration)
         .style('opacity', hoverOpacity);
+      // Make hovered state full opacity.
       d3.select(this)
         .transition()
         .duration(animationDuration)
         .style('opacity', 1);
+      // Update labels and information boxes.
       const stateName = e.target.getAttribute('stateName');
       const record = stateDict.getRecord(stateName, selectScreenYear);
       d3.select('#state_label_name').text(`${stateName}`);
@@ -336,6 +338,12 @@ async function main() {
     };
   }
 
+  /**
+   * Returns a mouseleave event handler function that modifies the styling
+   * of the states in the map. Has different behavior depending on if
+   * the app is in comparison mode or not as specified by isComp.
+   * @param {boolean} isComp
+   */
   function onMouseLeave(isComp) {
     return function (e) {
       stateLabel.style('visibility', 'hidden');
@@ -345,6 +353,8 @@ async function main() {
           .duration(animationDuration)
           .style('opacity', 1);
       } else if (compSelected.length == 1) {
+        // In comparison mode, one element is selected. In this case, do not
+        // return the styling to normal for all states.
         d3.selectAll('path.state')
           .filter((d, i) => {
             const name = d.properties.name;
@@ -354,6 +364,8 @@ async function main() {
           .duration(animationDuration)
           .style('opacity', hoverOpacity);
       } else {
+        // In comparison mode, no states are selected. Return all states to
+        // normal opacity.
         d3.selectAll('path.state')
           .transition()
           .duration(animationDuration)
@@ -362,6 +374,10 @@ async function main() {
     };
   }
 
+  /**
+   * Returns an onchange event handler for the slider.
+   * @param {Array<number>} all_years
+   */
   function onChangeSlider(all_years) {
     return function (e) {
       if (play) {
@@ -371,6 +387,7 @@ async function main() {
     };
   }
 
+  // SETUP EVENT LISTENERS FOR BUTTONS AND SLIDERS
   playPauseButton.on('click', () => playOrPause(years));
   switchToSingle.on('click', () => singleView());
   switchToComp.on('click', () => compView());
@@ -378,6 +395,7 @@ async function main() {
   compBack.on('click', reset);
   dateSlider.on('input', onChangeSlider(years));
 
+  // INITIAL RENDER
   renderStates(2015, isSingle);
   drawLegend(mapLegend, colorScale);
 
