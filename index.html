@@ -261,6 +261,9 @@
         }
 
         function reset() {
+          if (play) {
+            playOrPause(years);
+          }
           selected = null;
           compSelected = [];
           d3.select('path.state').style('opacity', 1);

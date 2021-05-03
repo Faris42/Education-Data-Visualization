@@ -74,9 +74,9 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
       .attr('x1', percentScale(0.5))
       .attr('x2', percentScale(0.5))
       .attr('y1', yCounter - 10)
-      .attr('y2', yCounter + 59)
+      .attr('y2', yCounter + 40)
       .style('stroke-dasharray', '5,5') //dashed array for line
-      .style('stroke', 'black');
+      .style('stroke', 'white');
 
     let valueText1 = value1;
     let valueText2 = value2;
