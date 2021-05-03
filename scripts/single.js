@@ -417,7 +417,7 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 		.append("text")
 		.attr("x", 24)
 		.attr("y", 15)
-		.text("Gdp per capita")
+		.text("GDP per capita")
 		.style("fill", "white");
 
 	graphLegend
