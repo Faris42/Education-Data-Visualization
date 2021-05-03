@@ -11,7 +11,7 @@ let chartHeight;
 let chartArea;
 let percentScale;
 
-let first = tCSSGroupingRule;
+let first = true;
 
 /**
  * Update method for changing the mosaic graphs for double analysis.
