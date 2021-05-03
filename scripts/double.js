@@ -11,6 +11,9 @@ let chartHeight;
 let chartArea;
 let percentScale;
 
+let leftArray;
+let rightArray;
+
 
 function renderDouble(sd, stateNames, yrs, activeYear) {
 
@@ -21,6 +24,9 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
     first = false;
   }
   
+  leftArray = new Array(values.length);
+  rightArray = new Array(values.length);
+
 	const state1 = sd.getRecord(stateNames[0], activeYear);
   const state2 = sd.getRecord(stateNames[1], activeYear);
   
@@ -30,7 +36,10 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
 		let value2 = state2[v];
 
 		let percent1 = value1 / (value1 + value2);
-		let percent2 = value2 / (value1 + value2);
+    let percent2 = value2 / (value1 + value2);
+    
+    leftArray.push(percent1);
+    rightArray.push(percent2);
 
 		let text = v.replaceAll("_", " ");
 		text = text.toLowerCase();
@@ -44,90 +53,32 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
 			.attr("dominant-baseline", "hanging")
 			.style("font", "14px Arial")
 			.style("font-weight", "bold")
-			.text(text);
-
-		// chartArea
-		// 	.append("rect")
-		// 	.attr("x", 0)
-		// 	.attr("y", yCounter)
-		// 	.attr("width", percentScale(percent1))
-		// 	.attr("height", 50)
-		// 	.attr("fill", "#16b6eb");
-
-		// chartArea
-		// 	.append("rect")
-		// 	.attr("x", percentScale(percent1))
-		// 	.attr("y", yCounter)
-		// 	.attr("width", percentScale(percent2))
-		// 	.attr("height", 50)
-		// 	.attr("fill", "#2979a3");
-
-
-		// chartArea
-		// 	.append("line")
-		// 	.attr("x1", percentScale(0.5))
-		// 	.attr("x2", percentScale(0.5))
-		// 	.attr("y1", yCounter - 10)
-		// 	.attr("y2", yCounter + 59)
-		// 	.style("stroke-dasharray", "5,5") //dashed array for line
-		// 	.style("stroke", "black");
-
-		// chartArea
-		// 	.append("text")
-		// 	.attr("x", percentScale(percent1) - 5)
-		// 	.attr("y", yCounter + 60)
-		// 	.attr("text-anchor", "end")
-		// 	.attr("dominant-baseline", "hanging")
-		// 	.style("font", "14px Arial")
-		// 	.text(value1);
-
-		// chartArea
-		// 	.append("text")
-		// 	.attr("x", percentScale(percent1) + 5)
-		// 	.attr("y", yCounter + 60)
-		// 	.attr("text-anchor", "start")
-		// 	.attr("dominant-baseline", "hanging")
-		// 	.style("font", "14px Arial")
-    // 	.text(value2);
+      .text(text);
+      
     const leftName = "rect.left."+v;
-    chartArea.selectAll(leftName)
+    chartArea.selectAll(leftName).data(leftArray)
       .join( enter => enter.append("rect")
                             .attr("x", 0)
                             .attr("y", yCounter)
                             .attr("width", percentScale(percent1))
                             .attr("height", 50)
                             .attr("fill", "#16b6eb")
-                            .attr("opacity", 0)
-                            .call( enter => enter.transition().attr('opacity', 1)),
-              update => update.call( update => update.transition()
-                                                    .attr("x", 0)
-                                                    .attr("y", yCounter)
-                                                    .attr("width", percentScale(percent1))
-                                                    .attr("height", 50)
-                                                    .attr("fill", "#16b6eb")),
+                            .attr("opacity", 1)
+                            .call( enter => enter.transition().duration(1000).attr("width", percentScale(percent1))),
               exit => exit.call( exit => exit.transition().attr('opacity', 0).remove));
     
     const rightName = "rect.right."+v;
-    chartArea.selectAll(rightName)
+    chartArea.selectAll(rightName).data(rightArray)
       .join( enter => enter.append("rect")
                             .attr("x", percentScale(percent1))
                             .attr("y", yCounter)
                             .attr("width", percentScale(percent2))
                             .attr("height", 50)
                             .attr("fill", "#2979a3")
-                            .attr("opacity", 0)
-                            .call( enter => enter.transition().attr('opacity', 1)),
-              update => update.call( update => update.transition()
-                                                      .attr("x", percentScale(percent1))
-                                                      .attr("y", yCounter)
-                                                      .attr("width", percentScale(percent2))
-                                                      .attr("height", 50)
-                                                      .attr("fill", "#2979a3")),
+                            .attr("opacity", 1)
+                            .call( enter => enter.transition().duration(1000).attr("x", percentScale(percent1))),
               exit => exit.call( exit => exit.transition().attr('opacity', 0).remove));
     
-
-    console.log(leftName);
-    console.log(rightName);
 		// chartArea
 		// 	.append("rect")
 		// 	.attr("x", percentScale(percent1))
@@ -146,6 +97,18 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
 			.style("stroke-dasharray", "5,5") //dashed array for line
 			.style("stroke", "black");
 
+    let valueText1 = value1;
+    let valueText2 = value2;
+
+    if(v.includes("PERCENTAGE")) {
+      valueText1 = decimalToPercent(valueText1);
+      valueText2 = decimalToPercent(valueText2);
+      
+    } else {
+      valueText1 = floatToDollars(valueText1);
+      valueText2 = floatToDollars(valueText2);
+    }
+
 		chartArea
 			.append("text")
 			.attr("x", percentScale(percent1) - 5)
@@ -153,7 +116,7 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
 			.attr("text-anchor", "end")
 			.attr("dominant-baseline", "hanging")
 			.style("font", "14px Arial")
-			.text(value1);
+			.text(valueText1);
 
 		chartArea
 			.append("text")
@@ -162,7 +125,7 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
 			.attr("text-anchor", "start")
 			.attr("dominant-baseline", "hanging")
 			.style("font", "14px Arial")
-			.text(value2);
+			.text(valueText2);
 
 		yCounter += 150;
 	});
@@ -171,7 +134,7 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
 
 function setupDouble() {
 
-	values = ["GDP", "GDP_PER_CAPITA", "INSTRUCTION_EXPENDITURE"];
+	values = ["GDP", "GDP_PER_CAPITA", "INSTRUCTION_EXPENDITURE", "EXPENDITURE_PER_STUDENT", "AVG_SCORE_PERCENTAGE"];
 
 	div = d3.select("div#screen_double");
   svg = d3.select("svg#doubleSvg");
