@@ -49,12 +49,11 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
 		let percent2 = value2 / (value1 + value2);
 
 		// Text formatting
-
+		let text = v.replaceAll("_", " ");
 		if (text.includes("ENROLL")) {
 			text = "ENROLLMENT OF STUDENTS";
 		}
 
-		let text = v.replaceAll("_", " ");
 		text = text.toLowerCase();
 		text = capitalizeWords(text);
 

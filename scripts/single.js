@@ -146,6 +146,11 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 		)
 		.attr("text-anchor", "middle")
 		.style("fill", "white");
+
+	let subtract = 0;
+	if (other_costs / currRecord.TOTAL_EXPENDITURE < 0.08) {
+		subtract = 5;
+	}
 	percentages
 		.append("text")
 		.attr(
@@ -153,7 +158,8 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 			percentScale(currRecord.CAPITAL_OUTLAY_EXPENDITURE) +
 				percentScale(currRecord.INSTRUCTION_EXPENDITURE) +
 				percentScale(currRecord.SUPPORT_SERVICES_EXPENDITURE) +
-				percentScale(other_costs) / 2
+				percentScale(other_costs) / 2 -
+				subtract
 		)
 		.attr("text-anchor", "middle")
 		.text(decimalToPercent(other_costs / currRecord.TOTAL_EXPENDITURE))
