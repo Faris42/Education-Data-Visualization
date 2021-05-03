@@ -116,11 +116,11 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
 
 function setupDouble() {
   values = [
-    'GDP',
-    'GDP_PER_CAPITA',
-    'INSTRUCTION_EXPENDITURE',
-    'EXPENDITURE_PER_STUDENT',
     'AVG_SCORE_PERCENTAGE',
+    'EXPENDITURE_PER_STUDENT',
+    'INSTRUCTION_EXPENDITURE',
+    'GDP_PER_CAPITA',
+    'GDP',
   ];
 
   div = d3.select('div#screen_double');
