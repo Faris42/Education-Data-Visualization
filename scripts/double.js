@@ -33,7 +33,12 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
 	let yCounter = 30;
 	values.forEach(function (v) {
 		let value1 = state1[v];
-		let value2 = state2[v];
+    let value2 = state2[v];
+    
+    if(v.includes("GDP")) {
+      value1 *= 1000000;
+      value2 *= 1000000;
+    }
 
 		let percent1 = value1 / (value1 + value2);
     let percent2 = value2 / (value1 + value2);
