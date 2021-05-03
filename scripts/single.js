@@ -13,7 +13,8 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 
 	// fill in the labels in the info box with info from record, use helper
 	// functions to format numbers accordingly
-	d3.select("#single_gdp").text(
+	d3.select("#single_gdp").text(floatToDollars(currRecord.GDP * 1000000));
+	d3.select("#single_gdp_per").text(
 		floatToDollars(currRecord.GDP_PER_CAPITA * 1000000)
 	);
 	d3.select("#single_scores").text(
