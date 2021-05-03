@@ -1,13 +1,7 @@
 function renderSingle(sd, stateName, yrs, activeYear) {
-	console.log("single render", sd, stateName, yrs, activeYear);
-
 	const records = sd.getRecords(stateName);
-	console.log(records);
-	console.log(activeYear);
 
 	const currRecord = records.years[activeYear];
-
-	console.log(currRecord);
 
 	d3.select("#single_gdp").text(
 		floatToDollars(currRecord.GDP_PER_CAPITA * 1000000)
@@ -30,6 +24,8 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 				currRecord.CAPITAL_OUTLAY_EXPENDITURE +
 				currRecord.OTHER_EXPENDITURE +
 				currRecord.SUPPORT_SERVICES_EXPENDITURE));
+
+	console.log(other_costs);
 
 	const barSvg = d3.select("svg#singleBarSvg");
 	const graphSvg = d3.select("svg#singleGraphSvg");
@@ -99,10 +95,65 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 		.attr("height", 50)
 		.attr("fill", "#2979a3");
 
+	const percentages = barSvg
+		.append("g")
+		.attr("transform", `translate(0,${margin.top + 75} )`);
+
+	percentages
+		.append("text")
+		.attr("x", percentScale(currRecord.INSTRUCTION_EXPENDITURE) / 2)
+		.text(
+			decimalToPercent(
+				currRecord.INSTRUCTION_EXPENDITURE / currRecord.TOTAL_EXPENDITURE
+			)
+		)
+		.attr("text-anchor", "middle")
+		.style("fill", "white");
+	percentages
+		.append("text")
+		.attr(
+			"x",
+			percentScale(currRecord.INSTRUCTION_EXPENDITURE) +
+				percentScale(currRecord.CAPITAL_OUTLAY_EXPENDITURE) / 2
+		)
+		.text(
+			decimalToPercent(
+				currRecord.CAPITAL_OUTLAY_EXPENDITURE / currRecord.TOTAL_EXPENDITURE
+			)
+		)
+		.attr("text-anchor", "middle")
+		.style("fill", "white");
+	percentages
+		.append("text")
+		.attr(
+			"x",
+			percentScale(currRecord.INSTRUCTION_EXPENDITURE) +
+				percentScale(currRecord.CAPITAL_OUTLAY_EXPENDITURE) +
+				percentScale(currRecord.SUPPORT_SERVICES_EXPENDITURE) / 2
+		)
+		.text(
+			decimalToPercent(
+				currRecord.SUPPORT_SERVICES_EXPENDITURE / currRecord.TOTAL_EXPENDITURE
+			)
+		)
+		.attr("text-anchor", "middle")
+		.style("fill", "white");
+	percentages
+		.append("text")
+		.attr(
+			"x",
+			percentScale(currRecord.CAPITAL_OUTLAY_EXPENDITURE) +
+				percentScale(currRecord.INSTRUCTION_EXPENDITURE) +
+				percentScale(currRecord.SUPPORT_SERVICES_EXPENDITURE) +
+				percentScale(other_costs) / 2
+		)
+		.attr("text-anchor", "middle")
+		.text(decimalToPercent(other_costs / currRecord.TOTAL_EXPENDITURE))
+		.style("fill", "white");
 	// make legend
 	const legend = barSvg
 		.append("g")
-		.attr("transform", `translate(${margin.left + 50},${margin.top + 60} )`);
+		.attr("transform", `translate(${margin.left + 50},${margin.top + 85} )`);
 
 	legend
 		.append("rect")
@@ -324,17 +375,6 @@ function renderSingle(sd, stateName, yrs, activeYear) {
 		.attr("x2", yearScale(activeYear))
 		.attr("y1", chartHeight - 5)
 		.attr("y2", 100);
-
-	console.log(yrs);
-	yrs.forEach((year) => {
-		console.log(year);
-		if (year === activeYear) {
-			console.log("ACTIVE");
-		}
-		console.log(records.years[year].GDP_PER_CAPITA);
-		console.log(records.years[year].AVG_SCORE_PERCENTAGE);
-		console.log(records.years[year].EXPENDITURE_PER_STUDENT);
-	});
 
 	// gdp is in millions
 	// expenditure is in thousands
