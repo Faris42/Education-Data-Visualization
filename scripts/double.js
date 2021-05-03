@@ -38,8 +38,10 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
     if(v.includes("GDP")) {
       value1 *= 1000000;
       value2 *= 1000000;
+    } else if(v.includes("EXPENDITURE")) {
+      value1 *= 1000;
+      value2 *= 1000;
     }
-
 		let percent1 = value1 / (value1 + value2);
     let percent2 = value2 / (value1 + value2);
     
