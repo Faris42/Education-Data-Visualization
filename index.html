@@ -291,6 +291,7 @@
     <div style="display: none" id="slider_wrapper">
       <button id="playPauseButton">Play</button>
       <p id="slider_title">2003</p>
+      <input id="date_slider" type="range" value="0" min="0" step="1" />
     </div>
 
     <script>
@@ -338,6 +339,7 @@
         const singleBack = d3.select('#single_back');
         const compBack = d3.select('#double_back');
         const modeSwitchLabel = d3.select('#action_item');
+        const dateSlider = d3.select('#date_slider');
 
         const [us, data] = await Promise.all([
           d3.json('data/states-10m.json'),
@@ -377,6 +379,8 @@
           .datum(statesMesh)
           .attr('class', 'outline')
           .attr('d', path);
+
+        dateSlider.attr('max', years.length === 0 ? 0 : years.length - 1);
 
         function renderStates(year, isSingle) {
           mainMap
@@ -469,12 +473,27 @@
           if (yearIndex === all_years.length) yearIndex = 0;
           const new_year = all_years[yearIndex];
           d3.select('#slider_title').text(new_year);
+          dateSlider.attr('value', yearIndex);
           if (selected === null && compSelected.length === 0) {
             renderStates(2015, isSingle);
           } else if (isSingle) {
-            renderSingle(stateDict, selected, years, new_year);
+            renderSingle(stateDict, selected, all_years, new_year);
           } else {
-            renderDouble(stateDict, compSelected, years, new_year);
+            renderDouble(stateDict, compSelected, all_years, new_year);
+          }
+        }
+
+        function setYear(all_years, newIndex) {
+          yearIndex = newIndex;
+          const new_year = all_years[yearIndex];
+          d3.select('#slider_title').text(new_year);
+          dateSlider.attr('value', yearIndex);
+          if (selected === null && compSelected.length === 0) {
+            renderStates(2015, isSingle);
+          } else if (isSingle) {
+            renderSingle(stateDict, selected, all_years, new_year);
+          } else {
+            renderDouble(stateDict, compSelected, all_years, new_year);
           }
         }
 
@@ -566,11 +585,22 @@
           };
         }
 
+        function onChangeSlider(all_years) {
+          return function (e) {
+            if (play) {
+              playOrPause(all_years);
+            }
+            console.log(e.target.value);
+            setYear(all_years, e.target.value);
+          };
+        }
+
         playPauseButton.on('click', () => playOrPause(years));
         switchToSingle.on('click', () => singleView(years));
         switchToComp.on('click', () => compView(years));
         singleBack.on('click', reset);
         compBack.on('click', reset);
+        dateSlider.on('change', onChangeSlider(years));
 
         renderStates(2015, isSingle);
         drawLegend(mapLegend, colorScale);
