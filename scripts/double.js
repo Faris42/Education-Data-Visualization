@@ -11,9 +11,6 @@ let chartHeight;
 let chartArea;
 let percentScale;
 
-let leftArray;
-let rightArray;
-
 
 function renderDouble(sd, stateNames, yrs, activeYear) {
 
@@ -45,9 +42,6 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
 		let percent1 = value1 / (value1 + value2);
     let percent2 = value2 / (value1 + value2);
     
-    leftArray.push(percent1);
-    rightArray.push(percent2);
-
 		let text = v.replaceAll("_", " ");
 		text = text.toLowerCase();
 		text = capitalize_Words(text);
@@ -61,38 +55,22 @@ function renderDouble(sd, stateNames, yrs, activeYear) {
 			.style("font", "14px Arial")
 			.style("font-weight", "bold")
       .text(text);
-      
-    const leftName = "rect.left."+v;
-    chartArea.selectAll(leftName).data(leftArray)
-      .join( enter => enter.append("rect")
-                            .attr("x", 0)
-                            .attr("y", yCounter)
-                            .attr("width", percentScale(percent1))
-                            .attr("height", 50)
-                            .attr("fill", "#16b6eb")
-                            .attr("opacity", 1)
-                            .call( enter => enter.transition().duration(1000).attr("width", percentScale(percent1))),
-              exit => exit.call( exit => exit.transition().attr('opacity', 0).remove));
-    
-    const rightName = "rect.right."+v;
-    chartArea.selectAll(rightName).data(rightArray)
-      .join( enter => enter.append("rect")
-                            .attr("x", percentScale(percent1))
-                            .attr("y", yCounter)
-                            .attr("width", percentScale(percent2))
-                            .attr("height", 50)
-                            .attr("fill", "#2979a3")
-                            .attr("opacity", 1)
-                            .call( enter => enter.transition().duration(1000).attr("x", percentScale(percent1))),
-              exit => exit.call( exit => exit.transition().attr('opacity', 0).remove));
-    
-		// chartArea
-		// 	.append("rect")
-		// 	.attr("x", percentScale(percent1))
-		// 	.attr("y", yCounter)
-		// 	.attr("width", percentScale(percent2))
-		// 	.attr("height", 50)
-		// 	.attr("fill", "#2979a3");
+
+    chartArea
+    .append("rect")
+    .attr("x", 0)
+    .attr("y", yCounter)
+    .attr("width", percentScale(percent1))
+    .attr("height", 50)
+    .attr("fill", "#16b6eb");
+          
+		chartArea
+			.append("rect")
+			.attr("x", percentScale(percent1))
+			.attr("y", yCounter)
+			.attr("width", percentScale(percent2))
+			.attr("height", 50)
+			.attr("fill", "#2979a3");
 
 
 		chartArea
