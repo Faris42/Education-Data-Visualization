@@ -169,3 +169,11 @@ body {
   margin: 0 10px 0 25px;
   color: white;
 }
+
+/* SINGLE SCREEN STYLES */
+#screen_single {
+  display: none;
+  flex-direction: column;
+  height: 100vh;
+  background: linear-gradient(var(--main-bg), white);
+}
