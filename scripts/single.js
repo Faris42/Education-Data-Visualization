@@ -438,7 +438,7 @@ function renderSingle(sd, stateName, yrs, activeYear) {
     .append('text')
     .attr('x', 200)
     .attr('y', 15)
-    .text('Average Student Score')
+    .text('Average student score')
     .style('fill', 'white');
 
   return;
